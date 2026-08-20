@@ -29,15 +29,17 @@ export function SiteHeader() {
         </Link>
 
         <nav className="ml-auto hidden items-center gap-7 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="rounded-sm text-sm text-muted-foreground underline-offset-4 outline-none hover:text-ink focus-visible:ring-3 focus-visible:ring-ring/50"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks
+            .filter((l) => l.live)
+            .map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="rounded-sm text-sm text-muted-foreground underline-offset-4 outline-none hover:text-ink focus-visible:ring-3 focus-visible:ring-ring/50"
+              >
+                {link.label}
+              </Link>
+            ))}
         </nav>
 
         <div className="ml-auto flex items-center gap-2 md:ml-0">
@@ -57,15 +59,17 @@ export function SiteHeader() {
                 <SheetTitle>Menu</SheetTitle>
               </SheetHeader>
               <nav className="flex flex-col gap-1 px-4">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className="rounded-sm px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted hover:text-ink"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
+                {navLinks
+                  .filter((l) => l.live)
+                  .map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className="rounded-sm px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted hover:text-ink"
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
               </nav>
               <div className="mt-4 px-4">
                 <Button asChild size="cta" className="w-full">

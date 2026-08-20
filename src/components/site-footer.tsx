@@ -1,35 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
-import { siteConfig } from "@/lib/site";
-
-const columns = [
-  {
-    title: "Service",
-    links: [
-      { label: "The process", href: "/process" },
-      { label: "What we do", href: "/services" },
-      { label: "Pricing", href: "/pricing" },
-      { label: "Success stories", href: "/success-stories" },
-    ],
-  },
-  {
-    title: "Company",
-    links: [
-      { label: "FAQ", href: "/faq" },
-      { label: "Contact", href: "/contact" },
-      { label: siteConfig.cta.label, href: siteConfig.cta.href },
-    ],
-  },
-  {
-    title: "Legal",
-    links: [
-      { label: "Terms", href: "/terms" },
-      { label: "Privacy", href: "/privacy" },
-      { label: "Refunds", href: "/refund" },
-    ],
-  },
-];
+import { footerColumns, siteConfig } from "@/lib/site";
 
 export function SiteFooter() {
   return (
@@ -57,22 +29,24 @@ export function SiteFooter() {
             </a>
           </div>
 
-          {columns.map((col) => (
+          {footerColumns.map((col) => (
             <div key={col.title}>
               <h2 className="font-mono text-xs font-medium tracking-[0.12em] text-dim uppercase">
                 {col.title}
               </h2>
               <ul className="mt-4 flex flex-col gap-2.5">
-                {col.links.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="rounded-sm text-sm text-muted-foreground underline-offset-4 outline-none hover:text-ink focus-visible:ring-3 focus-visible:ring-ring/50"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
+                {col.links
+                  .filter((l) => l.live)
+                  .map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="rounded-sm text-sm text-muted-foreground underline-offset-4 outline-none hover:text-ink focus-visible:ring-3 focus-visible:ring-ring/50"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
               </ul>
             </div>
           ))}

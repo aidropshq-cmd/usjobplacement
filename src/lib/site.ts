@@ -23,11 +23,48 @@ export const siteConfig = {
   },
 } as const;
 
+/**
+ * Navigation.
+ *
+ * `live: false` means the route is not built yet, so the link is not rendered.
+ * Linking to a 404 is worse than not linking at all — and Next prefetches nav
+ * links, so a dead entry also fires a 404 on every page load. Flip these to
+ * true in phase 04 as each page ships; nothing else needs to change.
+ */
 export const navLinks = [
-  { label: "Process", href: "/process" },
-  { label: "Pricing", href: "/pricing" },
-  { label: "Success stories", href: "/success-stories" },
-  { label: "FAQ", href: "/faq" },
+  { label: "Process", href: "/process", live: true },
+  { label: "Pricing", href: "/pricing", live: false },
+  { label: "Success stories", href: "/success-stories", live: false },
+  { label: "FAQ", href: "/faq", live: false },
+  { label: "Contact", href: "/contact", live: true },
+] as const;
+
+export const footerColumns = [
+  {
+    title: "Service",
+    links: [
+      { label: "The process", href: "/process", live: true },
+      { label: "What we do", href: "/services", live: false },
+      { label: "Pricing", href: "/pricing", live: false },
+      { label: "Success stories", href: "/success-stories", live: false },
+    ],
+  },
+  {
+    title: "Company",
+    links: [
+      { label: "FAQ", href: "/faq", live: false },
+      { label: "Contact", href: "/contact", live: true },
+      { label: "Book a free demo call", href: "/book-demo", live: true },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { label: "Terms", href: "/terms", live: false },
+      { label: "Privacy", href: "/privacy", live: false },
+      { label: "Refunds", href: "/refund", live: false },
+    ],
+  },
 ] as const;
 
 /**
