@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
+import { ContactLinks } from "@/components/contact-links";
 import { footerColumns, siteConfig } from "@/lib/site";
 
 export function SiteFooter() {
@@ -21,12 +22,7 @@ export function SiteFooter() {
               End-to-end support for genuine US full-time roles — from profile
               building through to onboarding.
             </p>
-            <a
-              href={`mailto:${siteConfig.contact.email}`}
-              className="mt-4 inline-block rounded-sm text-sm text-primary underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
-            >
-              {siteConfig.contact.email}
-            </a>
+            <ContactLinks className="mt-4 flex-col items-start" size="sm" />
           </div>
 
           {footerColumns.map((col) => (

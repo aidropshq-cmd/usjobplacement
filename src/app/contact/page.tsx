@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 
 import { ContactForm } from "@/components/contact-form";
+import { ContactLinks } from "@/components/contact-links";
 import { Container } from "@/components/layout/container";
 import { Eyebrow } from "@/components/layout/eyebrow";
 import { siteConfig } from "@/lib/site";
@@ -26,14 +27,9 @@ export default function ContactPage() {
             </p>
             <div className="mt-2 flex flex-col gap-1 border-t border-hairline pt-6">
               <span className="font-mono text-xs tracking-[0.1em] text-dim uppercase">
-                Email
+                Reach us directly
               </span>
-              <a
-                href={`mailto:${siteConfig.contact.email}`}
-                className="w-fit rounded-sm text-primary underline-offset-4 hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
-              >
-                {siteConfig.contact.email}
-              </a>
+              <ContactLinks className="mt-1 flex-col items-start" />
             </div>
             <p className="max-w-[52ch] text-sm text-dim">
               If you want to get started rather than ask a question, the demo

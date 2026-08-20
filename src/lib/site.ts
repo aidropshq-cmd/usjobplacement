@@ -15,7 +15,17 @@ export const siteConfig = {
     url: "https://zapkitt.com",
   },
   contact: {
-    email: "hello@zapkitt.com",
+    email: "aidropshq@gmail.com",
+    /**
+     * WhatsApp. Set `number` in full international E.164 form (digits only,
+     * no +, no spaces) — that is what wa.me requires. Leave it empty and the
+     * WhatsApp links simply do not render, so a half-configured number never
+     * ships as a dead link.
+     */
+    whatsapp: {
+      number: "",
+      display: "",
+    },
   },
   cta: {
     label: "Book a free demo call",

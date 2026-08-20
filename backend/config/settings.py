@@ -148,10 +148,14 @@ if DEBUG:
 
 # Email — Resend. Without an API key the adapter logs instead of sending, so
 # local development never silently depends on a live outbound service.
+#
+# EMAIL_FROM must be on a domain you can prove you own — Resend verifies it
+# by DNS. A gmail.com sender is impossible for anyone but Google, so mail
+# goes OUT as @zapkitt.com and REPLIES come back to the team address.
 RESEND_API_KEY = os.getenv("RESEND_API_KEY", "")
-EMAIL_FROM = os.getenv("EMAIL_FROM", "ZapKitt Placement <hello@zapkitt.com>")
-EMAIL_REPLY_TO = os.getenv("EMAIL_REPLY_TO", "hello@zapkitt.com")
-NOTIFY_TEAM_EMAILS = env_list("NOTIFY_TEAM_EMAILS") or ["hello@zapkitt.com"]
+EMAIL_FROM = os.getenv("EMAIL_FROM", "ZapKitt Placement <noreply@zapkitt.com>")
+EMAIL_REPLY_TO = os.getenv("EMAIL_REPLY_TO", "aidropshq@gmail.com")
+NOTIFY_TEAM_EMAILS = env_list("NOTIFY_TEAM_EMAILS") or ["aidropshq@gmail.com"]
 
 # WhatsApp — pluggable and OFF until credentials exist. Business-initiated
 # WhatsApp messages require a Meta Business Account, a verified sender number
