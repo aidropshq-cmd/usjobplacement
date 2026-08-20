@@ -1,0 +1,11 @@
+# Shell scripts run on Linux (Render). CRLF makes the shebang fail with
+# "bad interpreter: /usr/bin/env bash^M", so pin them to LF regardless of
+# the checkout platform or a developer's core.autocrlf setting.
+*.sh text eol=lf
+
+# Normalise everything else, but leave binaries alone.
+* text=auto
+*.png binary
+*.ico binary
+*.jpg binary
+*.woff2 binary
