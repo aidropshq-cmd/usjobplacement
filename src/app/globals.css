@@ -1,0 +1,239 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* =========================================================================
+   ZapKitt design tokens — usjobplacement.zapkitt.com
+   Inherited from the ZapKitt brand system: violet #6C3CE1, Inter, light ground.
+   Marketing pages are LIGHT ONLY. The .dark block exists so the candidate
+   portal can opt in later; never add `class="dark"` to a marketing route.
+   ========================================================================= */
+
+@theme inline {
+  /* ---- fonts (loaded in layout.tsx via next/font) ---- */
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
+  --font-heading: var(--font-inter);
+
+  /* ---- shadcn surface contract ---- */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* ---- ZapKitt brand extensions ---- */
+  --color-ink: var(--ink);
+  --color-dim: var(--dim);
+  --color-surface-alt: var(--surface-alt);
+  --color-violet-hover: var(--violet-hover);
+  --color-violet-light: var(--violet-light);
+  --color-violet-ink: var(--violet-ink);
+  --color-tint: var(--tint);
+  --color-hairline: var(--hairline);
+
+  /* ---- portal stage semantics (never used as brand accent) ---- */
+  --color-stage-done: var(--stage-done);
+  --color-stage-done-tint: var(--stage-done-tint);
+  --color-stage-action: var(--stage-action);
+  --color-stage-action-tint: var(--stage-action-tint);
+  --color-stage-blocked: var(--stage-blocked);
+  --color-stage-blocked-tint: var(--stage-blocked-tint);
+
+  /* ---- type scale (fluid display, fixed body) ---- */
+  --text-display: clamp(2.25rem, 5vw, 3.75rem);
+  --text-display--line-height: 1.04;
+  --text-display--letter-spacing: -0.032em;
+  --text-h2: clamp(1.5rem, 2.8vw, 2.125rem);
+  --text-h2--line-height: 1.18;
+  --text-h2--letter-spacing: -0.025em;
+  --text-h3: 1.125rem;
+  --text-h3--line-height: 1.35;
+  --text-h3--letter-spacing: -0.015em;
+  --text-label: 0.75rem;
+  --text-label--line-height: 1.4;
+  --text-label--letter-spacing: 0.12em;
+
+  /* ---- shape ---- */
+  --radius-sm: calc(var(--radius) * 0.6); /* ~8px  controls */
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius); /* 14px cards   */
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+
+  /* ---- elevation: exactly one shadow, used only on tinted ground ---- */
+  --shadow-card:
+    0 1px 2px rgb(22 19 39 / 0.05), 0 8px 24px -12px rgb(22 19 39 / 0.14);
+
+  /* ---- motion: one curve, one range ---- */
+  --ease-out-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* ---- reading measure ---- */
+  --container-measure: 68ch;
+}
+
+:root {
+  --radius: 0.875rem;
+
+  /* surfaces — the ground is violet-biased, never a pure grey */
+  --background: #fbfaff;
+  --foreground: #161327;
+  --card: #ffffff;
+  --card-foreground: #161327;
+  --popover: #ffffff;
+  --popover-foreground: #161327;
+  --surface-alt: #f5f2fd;
+
+  /* brand */
+  --primary: #6c3ce1;
+  --primary-foreground: #ffffff;
+  --violet-hover: #5527cc;
+  --violet-light: #8b5cf6;
+  --violet-ink: #4a24a8;
+  --tint: #f1ecff;
+
+  --secondary: #f1ecff;
+  --secondary-foreground: #4a24a8;
+  --accent: #f1ecff;
+  --accent-foreground: #4a24a8;
+
+  /* text */
+  --ink: #161327;
+  --muted: #f5f2fd;
+  --muted-foreground: #635c7a;
+  --dim: #8c86a3;
+
+  /* lines */
+  --border: #e7e3f2;
+  --hairline: #e7e3f2;
+  --input: #d5ceea;
+  --ring: #6c3ce1;
+
+  /* semantics */
+  --destructive: #b01f52;
+  --stage-done: #0e7f58;
+  --stage-done-tint: #e4f6ee;
+  --stage-action: #9a5b06;
+  --stage-action-tint: #fbf0dc;
+  --stage-blocked: #b01f52;
+  --stage-blocked-tint: #fce9f0;
+}
+
+/* Portal-only. Not applied on any marketing route. */
+.dark {
+  --background: #100d1c;
+  --foreground: #edeaf7;
+  --card: #181428;
+  --card-foreground: #edeaf7;
+  --popover: #181428;
+  --popover-foreground: #edeaf7;
+  --surface-alt: #1f1a33;
+
+  --primary: #a78bfa;
+  --primary-foreground: #100d1c;
+  --violet-hover: #c4b2fd;
+  --violet-light: #c4b2fd;
+  --violet-ink: #c9b8ff;
+  --tint: #241c3d;
+
+  --secondary: #241c3d;
+  --secondary-foreground: #c9b8ff;
+  --accent: #241c3d;
+  --accent-foreground: #c9b8ff;
+
+  --ink: #edeaf7;
+  --muted: #1f1a33;
+  --muted-foreground: #a79fc0;
+  --dim: #7e769a;
+
+  --border: #2c2545;
+  --hairline: #2c2545;
+  --input: #3d3459;
+  --ring: #a78bfa;
+
+  --destructive: #fb7ba8;
+  --stage-done: #4ade9e;
+  --stage-done-tint: #123527;
+  --stage-action: #f0b45c;
+  --stage-action-tint: #3a2a11;
+  --stage-blocked: #fb7ba8;
+  --stage-blocked-tint: #3a1526;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-size: 17px;
+    line-height: 1.65;
+  }
+
+  /* Headings carry the personality: weight 800, tight tracking, balanced wrap. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-ink;
+    text-wrap: balance;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Digits line up in the stat strip and the rail's stage numbers. */
+  th,
+  td,
+  time,
+  [data-numeric] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  :focus-visible {
+    @apply outline-ring;
+    outline-width: 2px;
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--tint);
+    color: var(--violet-ink);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
