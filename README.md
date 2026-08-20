@@ -8,8 +8,8 @@ coaching, background verification guidance, offer and onboarding support.
 
 ## Stack
 
-| Layer    | Choice                                          | Host              |
-| -------- | ----------------------------------------------- | ----------------- |
+| Layer    | Choice                                           | Host              |
+| -------- | ------------------------------------------------ | ----------------- |
 | Frontend | Next.js 16 (App Router), TypeScript, Tailwind v4 | Vercel            |
 | UI       | shadcn/ui on Radix — **no MUI**                  | —                 |
 | Backend  | Django + DRF (phase 03)                          | Render            |
@@ -31,13 +31,13 @@ cp .env.example .env.local
 npm run dev
 ```
 
-| Script              | Does                            |
-| ------------------- | ------------------------------- |
-| `npm run dev`       | Dev server on :3000             |
-| `npm run build`     | Production build                |
-| `npm run typecheck` | `tsc --noEmit`                  |
-| `npm run lint`      | ESLint                          |
-| `npm run format`    | Prettier + Tailwind class sort  |
+| Script              | Does                           |
+| ------------------- | ------------------------------ |
+| `npm run dev`       | Dev server on :3000            |
+| `npm run build`     | Production build               |
+| `npm run typecheck` | `tsc --noEmit`                 |
+| `npm run lint`      | ESLint                         |
+| `npm run format`    | Prettier + Tailwind class sort |
 
 ## Design system
 
@@ -87,9 +87,9 @@ Two phrases carry real risk and are settled policy, not style preferences:
 
 1. **Never write "interview support" unqualified.** In this market it is read as
    someone assisting during a live interview, which is fraud — it voids offers,
-   gets candidates blacklisted, and puts visa status at risk. Write: *"We coach
+   gets candidates blacklisted, and puts visa status at risk. Write: _"We coach
    you before every round and debrief after. We prepare you — we are never on
-   the call."*
+   the call."_
 2. **Background verification means genuine records.** We help candidates
    assemble and verify real employment and education history. Never imply
    anything else.

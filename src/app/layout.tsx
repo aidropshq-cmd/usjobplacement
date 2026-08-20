@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { SiteFooter } from "@/components/site-footer";
+import { SiteHeader } from "@/components/site-header";
 import { Toaster } from "@/components/ui/sonner";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
@@ -50,7 +52,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${inter.variable} ${jetbrainsMono.variable} h-full`}
     >
       <body className="flex min-h-full flex-col">
+        <SiteHeader />
         {children}
+        <SiteFooter />
         <Toaster position="top-center" />
       </body>
     </html>
