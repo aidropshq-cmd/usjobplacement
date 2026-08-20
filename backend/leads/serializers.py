@@ -1,3 +1,5 @@
+import re
+
 from rest_framework import serializers
 
 from .models import ContactMessage, Lead
@@ -43,6 +45,38 @@ class LeadSerializer(serializers.ModelSerializer):
         if len(cleaned) < 2:
             raise serializers.ValidationError("Enter your full name.")
         return cleaned
+
+    def validate_phone(self, value: str) -> str:
+        """US numbers only, mirroring src/lib/phone.ts.
+
+        Enforced here as well as in the browser because this endpoint is
+        public — client-side validation is a convenience for real users, not
+        a control. Stored canonically as +1XXXXXXXXXX.
+
+        Tradeoff worth remembering: this rejects international students who
+        have not arrived in the US yet and still carry a home-country number.
+        If that changes, relax this AND isValidUsPhone in the frontend.
+        """
+        if not value:
+            return ""
+
+        digits = re.sub(r"\D", "", value)
+        if len(digits) == 11 and digits.startswith("1"):
+            digits = digits[1:]
+
+        # NANP: 10 digits, area and exchange codes start 2-9, no N11 area code.
+        valid = (
+            len(digits) == 10
+            and re.fullmatch(r"[2-9]\d\d", digits[:3]) is not None
+            and not digits[:3].endswith("11")
+            and re.fullmatch(r"[2-9]\d\d", digits[3:6]) is not None
+        )
+        if not valid:
+            raise serializers.ValidationError(
+                "Enter a US phone number, like +1 (555) 000-0000"
+            )
+
+        return f"+1{digits}"
 
     def validate_message(self, value: str) -> str:
         # Long enough for real context, short enough that the field is not a

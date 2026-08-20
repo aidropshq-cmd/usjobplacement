@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import { ApiError, leadSchema, submitLead, type LeadInput } from "@/lib/api";
 import { siteConfig } from "@/lib/site";
+import { formatUsPhone, US_PHONE_PLACEHOLDER } from "@/lib/phone";
 
 const authOptions = [
   { value: "f1", label: "F1 student" },
@@ -149,9 +150,20 @@ export function LeadForm() {
           <Input
             id="phone"
             type="tel"
+            inputMode="tel"
             autoComplete="tel"
-            {...register("phone")}
+            placeholder={US_PHONE_PLACEHOLDER}
+            aria-invalid={!!errors.phone}
+            aria-describedby={errors.phone ? "phone-error" : undefined}
+            {...register("phone", {
+              // Format as they type, so the US shape is obvious before they
+              // ever hit submit rather than only in an error message.
+              onChange: (e) => {
+                e.target.value = formatUsPhone(e.target.value);
+              },
+            })}
           />
+          <FieldError id="phone-error" message={errors.phone?.message} />
         </div>
 
         <div className="flex flex-col gap-2">

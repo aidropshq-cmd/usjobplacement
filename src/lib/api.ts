@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import { isValidUsPhone, toE164, US_PHONE_ERROR } from "./phone";
+
 /**
  * The boundary between Next.js and the Django API.
  *
@@ -34,7 +36,13 @@ export const leadSchema = z.object({
     .trim()
     .min(1, "Enter your email so we can reply")
     .email("Enter an email in the form name@example.com"),
-  phone: z.string().trim().max(32, "That phone number is too long").optional(),
+  // Optional, but US-only when provided. See src/lib/phone.ts for the
+  // tradeoff this makes against pre-arrival international candidates.
+  phone: z
+    .string()
+    .trim()
+    .refine((v) => v === "" || isValidUsPhone(v), { message: US_PHONE_ERROR })
+    .optional(),
   work_authorization: z.enum(workAuthValues, {
     message: "Select your work authorisation",
   }),
@@ -134,6 +142,8 @@ async function post(path: string, body: unknown) {
 export async function submitLead(input: LeadInput) {
   const data = await post("/api/leads/", {
     ...input,
+    // Store one canonical shape, not whatever the user typed.
+    phone: input.phone ? toE164(input.phone) : "",
     source_path: typeof window === "undefined" ? "" : window.location.pathname,
   });
   return leadResponseSchema.parse(data);

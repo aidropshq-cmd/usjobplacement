@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+from django.core.cache import cache
 from django.test import TestCase, override_settings
 
 from .models import ContactMessage, Lead
@@ -7,7 +8,7 @@ from .models import ContactMessage, Lead
 VALID_LEAD = {
     "full_name": "Priya Raman",
     "email": "priya@example.com",
-    "phone": "+1 555 0100",
+    "phone": "+1 (415) 555-0142",
     "work_authorization": "opt",
     "target_roles": "Senior data engineer — Bay Area or remote",
     "linkedin_url": "https://www.linkedin.com/in/example",
@@ -24,8 +25,25 @@ NO_THROTTLE = {"DEFAULT_THROTTLE_CLASSES": [], "DEFAULT_THROTTLE_RATES": {}}
 API_TEST = {"REST_FRAMEWORK": NO_THROTTLE, "SECURE_SSL_REDIRECT": False}
 
 
+class ApiTestCase(TestCase):
+    """Base for anything that calls the API.
+
+    Clears the throttle history between tests. `override_settings` alone is
+    not enough: DRF binds `APIView.throttle_classes` from the settings at
+    import time, so replacing REST_FRAMEWORK later does not unbind it. The
+    rate limit stays live during tests, and a class that makes enough requests
+    starts getting 429s partway through — which is exactly what happened when
+    the phone cases were added. Throttle state lives in the cache, so clearing
+    it per test makes each one independent.
+    """
+
+    def setUp(self):
+        super().setUp()
+        cache.clear()
+
+
 @override_settings(**API_TEST)
-class LeadCreateTests(TestCase):
+class LeadCreateTests(ApiTestCase):
     url = "/api/leads/"
 
     @patch("leads.views.notify_new_lead")
@@ -89,6 +107,47 @@ class LeadCreateTests(TestCase):
         self.assertEqual(Lead.objects.count(), 1)
 
     @patch("leads.views.notify_new_lead")
+    def test_us_phone_is_normalised_to_e164(self, notify):
+        for typed in ["(415) 555-0142", "415-555-0142", "+1 415 555 0142", "14155550142"]:
+            Lead.objects.all().delete()
+            response = self.client.post(
+                self.url,
+                {**VALID_LEAD, "phone": typed},
+                content_type="application/json",
+            )
+            self.assertEqual(response.status_code, 201, typed)
+            self.assertEqual(Lead.objects.get().phone, "+14155550142", typed)
+
+    @patch("leads.views.notify_new_lead")
+    def test_non_us_and_malformed_phones_are_rejected(self, notify):
+        cases = {
+            "+91 98765 43210": "Indian mobile",
+            "+44 20 7946 0958": "UK landline",
+            "555-0142": "too short",
+            "(015) 555-0142": "area code starts with 0",
+            "(911) 555-0142": "N11 service code",
+            "(415) 155-0142": "exchange starts with 1",
+        }
+        for number, why in cases.items():
+            response = self.client.post(
+                self.url,
+                {**VALID_LEAD, "phone": number},
+                content_type="application/json",
+            )
+            self.assertEqual(response.status_code, 400, why)
+            self.assertIn("phone", response.json(), why)
+        self.assertEqual(Lead.objects.count(), 0)
+
+    @patch("leads.views.notify_new_lead")
+    def test_phone_stays_optional(self, notify):
+        response = self.client.post(
+            self.url, {**VALID_LEAD, "phone": ""}, content_type="application/json"
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(Lead.objects.get().phone, "")
+
+    @patch("leads.views.notify_new_lead")
     def test_request_metadata_is_captured(self, notify):
         response = self.client.post(
             self.url,
@@ -107,7 +166,7 @@ class LeadCreateTests(TestCase):
 
 
 @override_settings(**API_TEST)
-class ContactMessageTests(TestCase):
+class ContactMessageTests(ApiTestCase):
     url = "/api/contact/"
 
     @patch("leads.views.notify_contact_message")
@@ -139,7 +198,7 @@ class ContactMessageTests(TestCase):
 
 
 @override_settings(**API_TEST)
-class EndpointAvailabilityTests(TestCase):
+class EndpointAvailabilityTests(ApiTestCase):
     def test_health_reports_channel_configuration(self):
         response = self.client.get("/api/health/")
 
