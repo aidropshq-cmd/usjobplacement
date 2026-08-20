@@ -79,25 +79,50 @@ def send_email(
 # ---------------------------------------------------------------- whatsapp
 
 
-def send_whatsapp(*, to: str, template: str, variables: list[str]) -> bool:
-    """Send a templated WhatsApp message.
+def _send_whatsapp_callmebot(*, to: str, text: str) -> bool:
+    """Free relay. No Meta account, works in minutes.
 
-    Only templates already approved by the provider can be sent to someone who
-    has not messaged us first — that is a WhatsApp platform rule, not a choice
-    we make here. `variables` fill the template's numbered placeholders.
+    Unofficial third party, so `text` must never contain candidate personal
+    data — see notify_new_lead, which sends only a lead id. There is no SLA;
+    this is a convenience alert, not the system of record. The database and
+    the Django admin are.
     """
-    if not settings.WHATSAPP_ENABLED:
-        logger.debug("WhatsApp disabled — skipping message to %s", to)
+    if not settings.CALLMEBOT_API_KEY:
+        logger.error("WHATSAPP_PROVIDER=callmebot but CALLMEBOT_API_KEY is missing.")
         return False
 
-    if settings.WHATSAPP_PROVIDER != "meta":
+    try:
+        response = requests.get(
+            "https://api.callmebot.com/whatsapp.php",
+            params={
+                "phone": to,
+                "text": text,
+                "apikey": settings.CALLMEBOT_API_KEY,
+            },
+            timeout=TIMEOUT,
+        )
+    except requests.RequestException:
+        logger.exception("CallMeBot request failed. to=%s", to)
+        return False
+
+    if response.status_code >= 400:
         logger.error(
-            "Unsupported WHATSAPP_PROVIDER=%r. Only 'meta' is implemented; add a "
-            "Twilio branch here if you switch.",
-            settings.WHATSAPP_PROVIDER,
+            "CallMeBot rejected the message. status=%s body=%s",
+            response.status_code,
+            response.text[:300],
         )
         return False
 
+    logger.info("WhatsApp (CallMeBot) sent. to=%s", to)
+    return True
+
+
+def _send_whatsapp_meta(*, to: str, template: str, variables: list[str]) -> bool:
+    """Official Cloud API.
+
+    Only templates already approved by Meta can be sent to someone who has not
+    messaged us first — that is a WhatsApp platform rule, not a choice here.
+    """
     if not (settings.WHATSAPP_PHONE_NUMBER_ID and settings.WHATSAPP_ACCESS_TOKEN):
         logger.error("WhatsApp enabled but phone number id or access token is missing.")
         return False
@@ -147,8 +172,30 @@ def send_whatsapp(*, to: str, template: str, variables: list[str]) -> bool:
         )
         return False
 
-    logger.info("WhatsApp sent. to=%s template=%s", to, template)
+    logger.info("WhatsApp (Meta) sent. to=%s template=%s", to, template)
     return True
+
+
+def send_whatsapp(*, to: str, text: str, variables: list[str] | None = None) -> bool:
+    """Dispatch to whichever provider is configured."""
+    if not settings.WHATSAPP_ENABLED:
+        logger.debug("WhatsApp disabled — skipping message to %s", to)
+        return False
+
+    provider = settings.WHATSAPP_PROVIDER
+    if provider == "callmebot":
+        return _send_whatsapp_callmebot(to=to, text=text)
+    if provider == "meta":
+        return _send_whatsapp_meta(
+            to=to,
+            template=settings.WHATSAPP_TEMPLATE_LEAD,
+            variables=variables or [],
+        )
+
+    logger.error(
+        "Unsupported WHATSAPP_PROVIDER=%r. Use 'callmebot' or 'meta'.", provider
+    )
+    return False
 
 
 # ---------------------------------------------------------------- composed
@@ -197,15 +244,16 @@ def notify_new_lead(lead) -> None:
         ),
     )
 
+    # Deliberately no name, email or phone here. CallMeBot is an unofficial
+    # third-party relay and candidate personal data does not belong in it —
+    # especially not work-authorisation status tied to a named person. The
+    # alert says a lead arrived; the admin holds who it was.
+    alert = f"New lead #{lead.pk} on usjobplacement. Open the admin to see it: {settings.ADMIN_URL}"
     for number in settings.NOTIFY_TEAM_WHATSAPP:
         send_whatsapp(
             to=number,
-            template=settings.WHATSAPP_TEMPLATE_LEAD,
-            variables=[
-                lead.full_name,
-                lead.get_work_authorization_display(),
-                lead.email,
-            ],
+            text=alert,
+            variables=[str(lead.pk)],
         )
 
 

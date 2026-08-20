@@ -1,7 +1,6 @@
 from unittest.mock import patch
 
 from django.test import TestCase, override_settings
-from django.urls import reverse
 
 from .models import ContactMessage, Lead
 
@@ -18,8 +17,14 @@ VALID_LEAD = {
 # Throttling is on in production but would make these tests order-dependent.
 NO_THROTTLE = {"DEFAULT_THROTTLE_CLASSES": [], "DEFAULT_THROTTLE_RATES": {}}
 
+# Production forces HTTPS, so the test client's http:// requests would all be
+# answered with a 301 instead of reaching a view. Disabling the redirect here
+# keeps the suite deterministic no matter what DJANGO_DEBUG happens to be in
+# the shell that runs it — which is how CI will run it.
+API_TEST = {"REST_FRAMEWORK": NO_THROTTLE, "SECURE_SSL_REDIRECT": False}
 
-@override_settings(REST_FRAMEWORK=NO_THROTTLE)
+
+@override_settings(**API_TEST)
 class LeadCreateTests(TestCase):
     url = "/api/leads/"
 
@@ -101,7 +106,7 @@ class LeadCreateTests(TestCase):
         self.assertEqual(lead.ip_address, "203.0.113.9")
 
 
-@override_settings(REST_FRAMEWORK=NO_THROTTLE)
+@override_settings(**API_TEST)
 class ContactMessageTests(TestCase):
     url = "/api/contact/"
 
@@ -133,6 +138,7 @@ class ContactMessageTests(TestCase):
         self.assertEqual(ContactMessage.objects.count(), 0)
 
 
+@override_settings(**API_TEST)
 class EndpointAvailabilityTests(TestCase):
     def test_health_reports_channel_configuration(self):
         response = self.client.get("/api/health/")
@@ -163,22 +169,61 @@ class NotificationTests(TestCase):
     def test_whatsapp_is_off_by_default(self):
         from .notifications import send_whatsapp
 
-        self.assertFalse(
-            send_whatsapp(to="+15550100", template="lead", variables=["a"])
-        )
+        self.assertFalse(send_whatsapp(to="15550100", text="hi"))
 
     @override_settings(
         WHATSAPP_ENABLED=True,
-        WHATSAPP_PHONE_NUMBER_ID="",
-        WHATSAPP_ACCESS_TOKEN="",
+        WHATSAPP_PROVIDER="callmebot",
+        CALLMEBOT_API_KEY="",
     )
-    def test_whatsapp_enabled_without_credentials_fails_loudly(self):
+    def test_callmebot_without_key_fails_loudly(self):
         from .notifications import send_whatsapp
 
         with self.assertLogs("leads.notifications", level="ERROR"):
-            self.assertFalse(
-                send_whatsapp(to="+15550100", template="lead", variables=["a"])
-            )
+            self.assertFalse(send_whatsapp(to="15550100", text="hi"))
+
+    @override_settings(
+        WHATSAPP_ENABLED=True,
+        WHATSAPP_PROVIDER="meta",
+        WHATSAPP_PHONE_NUMBER_ID="",
+        WHATSAPP_ACCESS_TOKEN="",
+    )
+    def test_meta_without_credentials_fails_loudly(self):
+        from .notifications import send_whatsapp
+
+        with self.assertLogs("leads.notifications", level="ERROR"):
+            self.assertFalse(send_whatsapp(to="15550100", text="hi"))
+
+    @override_settings(WHATSAPP_ENABLED=True, WHATSAPP_PROVIDER="carrier-pigeon")
+    def test_unknown_provider_fails_loudly(self):
+        from .notifications import send_whatsapp
+
+        with self.assertLogs("leads.notifications", level="ERROR"):
+            self.assertFalse(send_whatsapp(to="15550100", text="hi"))
+
+    @override_settings(
+        RESEND_API_KEY="",
+        WHATSAPP_ENABLED=True,
+        WHATSAPP_PROVIDER="callmebot",
+        CALLMEBOT_API_KEY="k",
+        NOTIFY_TEAM_WHATSAPP=["15550100"],
+    )
+    @patch("leads.notifications.requests.get")
+    def test_whatsapp_alert_carries_no_candidate_data(self, get):
+        """CallMeBot is an unofficial relay. A candidate's name, email and
+        work-authorisation status must not travel through it."""
+        from .notifications import notify_new_lead
+
+        get.return_value.status_code = 200
+        lead = Lead.objects.create(**VALID_LEAD)
+
+        notify_new_lead(lead)
+
+        sent = get.call_args.kwargs["params"]["text"]
+        self.assertIn(f"#{lead.pk}", sent)
+        self.assertNotIn("Priya", sent)
+        self.assertNotIn("priya@example.com", sent)
+        self.assertNotIn("OPT", sent)
 
     @override_settings(RESEND_API_KEY="test-key")
     @patch("leads.notifications.requests.post")

@@ -157,18 +157,26 @@ EMAIL_FROM = os.getenv("EMAIL_FROM", "ZapKitt Placement <noreply@zapkitt.com>")
 EMAIL_REPLY_TO = os.getenv("EMAIL_REPLY_TO", "aidropshq@gmail.com")
 NOTIFY_TEAM_EMAILS = env_list("NOTIFY_TEAM_EMAILS") or ["aidropshq@gmail.com"]
 
-# WhatsApp — pluggable and OFF until credentials exist. Business-initiated
-# WhatsApp messages require a Meta Business Account, a verified sender number
-# and pre-approved message templates; none of that can be provisioned from
-# code. Set WHATSAPP_ENABLED=true once those exist.
+# WhatsApp — pluggable, OFF until configured.
+#
+# Two providers:
+#   "callmebot" — free, works in minutes, no Meta account. It is an unofficial
+#                 third-party relay, so we send NO candidate personal data
+#                 through it: the alert carries a lead id and nothing more.
+#                 No SLA; treat it as a convenience, not a system of record.
+#   "meta"      — the official Cloud API. Needs a Meta Business Account, a
+#                 verified sender number and pre-approved templates, which
+#                 takes days to obtain and cannot be provisioned from code.
 WHATSAPP_ENABLED = env_bool("WHATSAPP_ENABLED", False)
-WHATSAPP_PROVIDER = os.getenv("WHATSAPP_PROVIDER", "meta")  # "meta" | "twilio"
+WHATSAPP_PROVIDER = os.getenv("WHATSAPP_PROVIDER", "callmebot")
+CALLMEBOT_API_KEY = os.getenv("CALLMEBOT_API_KEY", "")
 WHATSAPP_PHONE_NUMBER_ID = os.getenv("WHATSAPP_PHONE_NUMBER_ID", "")
 WHATSAPP_ACCESS_TOKEN = os.getenv("WHATSAPP_ACCESS_TOKEN", "")
 WHATSAPP_TEMPLATE_LEAD = os.getenv("WHATSAPP_TEMPLATE_LEAD", "")
 NOTIFY_TEAM_WHATSAPP = env_list("NOTIFY_TEAM_WHATSAPP")
 
 SITE_URL = os.getenv("SITE_URL", "https://usjobplacement.zapkitt.com")
+ADMIN_URL = os.getenv("ADMIN_URL", "https://usjobplacement-api.onrender.com/admin/")
 
 # ---------------------------------------------------------------- security
 
