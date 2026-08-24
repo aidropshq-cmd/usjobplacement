@@ -49,7 +49,36 @@ export const navLinks = [
   { label: "Contact", href: "/contact", live: true },
 ] as const;
 
-export const footerColumns = [
+/**
+ * A footer link.
+ *
+ * Explicitly typed rather than `as const` so the optional fields below are
+ * usable: a readonly tuple of heterogeneous literals makes `link.subtitle`
+ * an error on every entry that omits it.
+ */
+export type FooterLink = {
+  label: string;
+  href: string;
+  /** False while the route is unbuilt — see the navLinks note above. */
+  live: boolean;
+  /** Opens in a new tab and renders as <a>, never next/link. */
+  external?: boolean;
+  /** One line under the label. Only where the label alone does not say
+   *  what is on the other side. */
+  subtitle?: string;
+  icon?: "whatsapp";
+};
+
+/**
+ * The channel URL comes from the environment so it can be changed without a
+ * code edit. NEXT_PUBLIC_* is inlined at build time, so an unset variable in
+ * Vercel means the link is absent from the bundle entirely — which is why
+ * `live` is derived from it rather than hardcoded to true. No env var, no
+ * dead link.
+ */
+const whatsappChannelUrl = process.env.NEXT_PUBLIC_WHATSAPP_CHANNEL_URL ?? "";
+
+export const footerColumns: { title: string; links: FooterLink[] }[] = [
   {
     title: "Service",
     links: [
@@ -65,6 +94,14 @@ export const footerColumns = [
       { label: "FAQ", href: "/faq", live: false },
       { label: "Contact", href: "/contact", live: true },
       { label: "Book a free demo call", href: "/book-demo", live: true },
+      {
+        label: "WhatsApp channel",
+        href: whatsappChannelUrl,
+        live: Boolean(whatsappChannelUrl),
+        external: true,
+        subtitle: "US role updates & interview prep",
+        icon: "whatsapp",
+      },
     ],
   },
   {
@@ -75,7 +112,7 @@ export const footerColumns = [
       { label: "Refunds", href: "/refund", live: false },
     ],
   },
-] as const;
+];
 
 /**
  * The eight stages of the placement process. Drives the Placement Rail, the
