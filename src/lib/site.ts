@@ -76,7 +76,8 @@ export type FooterLink = {
  * `live` is derived from it rather than hardcoded to true. No env var, no
  * dead link.
  */
-const whatsappChannelUrl = process.env.NEXT_PUBLIC_WHATSAPP_CHANNEL_URL ?? "";
+export const whatsappChannelUrl =
+  process.env.NEXT_PUBLIC_WHATSAPP_CHANNEL_URL ?? "";
 
 export const footerColumns: { title: string; links: FooterLink[] }[] = [
   {

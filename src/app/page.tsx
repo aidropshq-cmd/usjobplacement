@@ -9,8 +9,9 @@ import { Container } from "@/components/layout/container";
 import { Eyebrow } from "@/components/layout/eyebrow";
 import { Section } from "@/components/layout/section";
 import { SectionHeading } from "@/components/layout/section-heading";
+import { WhatsAppIcon } from "@/components/icons/whatsapp";
 import { Button } from "@/components/ui/button";
-import { siteConfig, stages } from "@/lib/site";
+import { siteConfig, stages, whatsappChannelUrl } from "@/lib/site";
 
 export default function HomePage() {
   return (
@@ -27,13 +28,32 @@ export default function HomePage() {
             eight documented stages, from building your profile to your first
             ninety days — with no percentage of your salary at the end of it.
           </p>
-          <div className="mt-2 flex flex-wrap items-center gap-4">
-            <Button size="cta" asChild>
+          {/* Buttons stack full-width on a phone and sit on one row from sm up;
+              the text link falls below either way. */}
+          <div className="mt-2 flex flex-col items-start gap-4 sm:flex-row sm:flex-wrap sm:items-center">
+            <Button size="cta" asChild className="w-full sm:w-auto">
               <Link href={siteConfig.cta.href}>
                 {siteConfig.cta.label}
                 <ArrowRight aria-hidden />
               </Link>
             </Button>
+            {whatsappChannelUrl ? (
+              <Button
+                size="cta"
+                variant="outline"
+                asChild
+                className="w-full border-primary text-primary hover:bg-tint hover:text-violet-ink sm:w-auto"
+              >
+                <a
+                  href={whatsappChannelUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <WhatsAppIcon className="size-[18px]" />
+                  Join WhatsApp channel
+                </a>
+              </Button>
+            ) : null}
             <Link
               href="/process"
               className="rounded-sm text-sm font-medium text-muted-foreground underline-offset-4 outline-none hover:text-primary hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
