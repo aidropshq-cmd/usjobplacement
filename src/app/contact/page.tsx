@@ -25,12 +25,12 @@ export default function ContactPage() {
               within one business day.
             </p>
             <div className="mt-2 flex flex-col gap-1 border-t border-hairline pt-6">
-              <span className="font-mono text-xs tracking-[0.1em] text-dim uppercase">
+              <span className="font-mono text-xs tracking-[0.1em] text-caption uppercase">
                 Reach us directly
               </span>
               <ContactLinks className="mt-1 flex-col items-start" />
             </div>
-            <p className="max-w-[52ch] text-sm text-dim">
+            <p className="max-w-[52ch] text-sm text-caption">
               If you want to get started rather than ask a question, the demo
               call is the faster route — it is free and there is nothing to pay
               on it.

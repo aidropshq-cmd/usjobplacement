@@ -40,6 +40,7 @@
   /* ---- ZapKitt brand extensions ---- */
   --color-ink: var(--ink);
   --color-dim: var(--dim);
+  --color-caption: var(--caption);
   --color-surface-alt: var(--surface-alt);
   --color-violet-hover: var(--violet-hover);
   --color-violet-light: var(--violet-light);
@@ -117,7 +118,15 @@
   --ink: #161327;
   --muted: #f5f2fd;
   --muted-foreground: #635c7a;
+
+  /* --dim is 3.34:1 on the page ground. That clears WCAG AA for large text
+     (>=24px, or >=18.66px bold) and for non-text UI, and fails it for body
+     copy. So it is allowed ONLY in those roles.
+     --caption is the floor for small secondary text: 5.24:1 on --background,
+     4.92:1 on --surface-alt and 4.71:1 on --tint, so it passes on every
+     ground small text actually sits on rather than only on the lightest. */
   --dim: #8c86a3;
+  --caption: #6b6684;
 
   /* lines */
   --border: #e7e3f2;
@@ -161,6 +170,7 @@
   --muted: #1f1a33;
   --muted-foreground: #a79fc0;
   --dim: #7e769a;
+  --caption: #a49cbb;
 
   --border: #2c2545;
   --hairline: #2c2545;

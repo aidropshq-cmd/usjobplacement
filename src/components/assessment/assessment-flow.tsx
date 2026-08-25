@@ -133,7 +133,7 @@ export function AssessmentFlow() {
           <span className="font-mono text-xs tracking-[0.1em] text-primary uppercase">
             Step {step + 1} of {STEPS.length}
           </span>
-          <span className="text-sm text-dim">{STEPS[step]}</span>
+          <span className="text-sm text-caption">{STEPS[step]}</span>
         </div>
         <div
           className="flex gap-1.5"
@@ -172,7 +172,7 @@ export function AssessmentFlow() {
                 </Choice>
               ))}
             </div>
-            <p className="mt-4 text-sm text-dim">
+            <p className="mt-4 text-sm text-caption">
               This shapes how we plan a search. It is not legal advice, and we
               are not immigration attorneys.
             </p>
@@ -251,7 +251,7 @@ export function AssessmentFlow() {
             <div className="mt-5 flex flex-col gap-2">
               <Label htmlFor="locations">
                 Preferred US locations{" "}
-                <span className="font-normal text-dim">(optional)</span>
+                <span className="font-normal text-caption">(optional)</span>
               </Label>
               <Input
                 id="locations"
@@ -302,7 +302,7 @@ export function AssessmentFlow() {
             <div className="mt-6 rounded-sm border border-dashed border-input bg-surface-alt px-5 py-5">
               <div className="flex items-start gap-3">
                 <Upload
-                  className="mt-0.5 size-4 shrink-0 text-dim"
+                  className="mt-0.5 size-4 shrink-0 text-caption"
                   aria-hidden
                 />
                 <div>
@@ -336,7 +336,7 @@ export function AssessmentFlow() {
                   {resumeFile ? (
                     <p className="mt-2 text-sm text-ink">{resumeFile.name}</p>
                   ) : null}
-                  <p className="mt-3 flex items-start gap-2 text-sm text-dim">
+                  <p className="mt-3 flex items-start gap-2 text-sm text-caption">
                     <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden />
                     <span>
                       PDF or DOCX, up to {RESUME_MAX_MB} MB. It is uploaded
@@ -407,7 +407,7 @@ function ScoreBar({
           style={{ width: `${score}%` }}
         />
       </div>
-      <p className="mt-2 text-sm text-dim">{reason}</p>
+      <p className="mt-2 text-sm text-caption">{reason}</p>
     </div>
   );
 }

@@ -218,7 +218,7 @@ export function ResumeReview({
                     <ConfidenceTag value={item.confidence} />
                   </span>
                   {item.current_value ? (
-                    <span className="mt-1 block text-xs text-dim">
+                    <span className="mt-1 block text-xs text-caption">
                       Currently:{" "}
                       {Array.isArray(item.current_value)
                         ? item.current_value.join(", ") || "empty"
@@ -247,7 +247,7 @@ export function ResumeReview({
                         className={cn(
                           "cursor-pointer rounded-sm border px-2.5 py-1 text-xs transition-colors",
                           dropped
-                            ? "border-input text-dim line-through"
+                            ? "border-input text-caption line-through"
                             : "border-primary bg-tint text-violet-ink",
                         )}
                       >
@@ -255,7 +255,7 @@ export function ResumeReview({
                       </button>
                     );
                   })}
-                  <span className="w-full text-xs text-dim">
+                  <span className="w-full text-xs text-caption">
                     Click any that are wrong to leave them out.
                   </span>
                 </div>
@@ -283,7 +283,7 @@ export function ResumeReview({
 
       {informational.length ? (
         <div className="mt-5 border-t border-hairline pt-4">
-          <p className="text-xs text-dim">
+          <p className="text-xs text-caption">
             Also found, kept for the person reviewing your file:{" "}
             {informational
               .map((item) =>

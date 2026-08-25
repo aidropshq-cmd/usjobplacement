@@ -66,7 +66,7 @@ export default function ProcessPage() {
               </div>
 
               <div className="self-start rounded-sm bg-surface-alt p-4">
-                <span className="font-mono text-xs tracking-[0.1em] text-dim uppercase">
+                <span className="font-mono text-xs tracking-[0.1em] text-caption uppercase">
                   You end up with
                 </span>
                 <p className="mt-2 text-sm font-medium text-ink">
@@ -129,8 +129,8 @@ export default function ProcessPage() {
             Want to see where you&rsquo;d start?
           </h2>
           <p className="max-w-[56ch] text-muted-foreground">
-            The demo call is a walkthrough of these eight stages against your
-            actual profile, not a sales pitch. It is free.
+            The career review is a walkthrough of these eight stages against
+            your actual profile, not a sales pitch. It is free.
           </p>
           <Button size="cta" asChild>
             <Link href={siteConfig.cta.href}>

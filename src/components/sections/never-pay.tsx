@@ -52,7 +52,7 @@ export function NeverPay() {
         </p>
         <ul className="mt-5 flex flex-col gap-2.5">
           {[
-            "Quoted on the demo call, not after",
+            "Quoted on the career review call, not after",
             "Covers all eight stages",
             "No charge tied to whether you accept an offer",
           ].map((line) => (

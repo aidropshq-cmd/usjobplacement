@@ -126,7 +126,7 @@ export function PlacementRail({ className }: { className?: string }) {
                 <span
                   className={cn(
                     "block font-mono text-xs tracking-[0.08em] transition-colors",
-                    isSelected ? "text-primary" : "text-dim",
+                    isSelected ? "text-primary" : "text-caption",
                   )}
                   data-numeric
                 >
@@ -136,7 +136,7 @@ export function PlacementRail({ className }: { className?: string }) {
                   className={cn(
                     "mt-0.5 block text-sm font-semibold transition-colors",
                     // fixed height so a two-line title does not push its
-                    // summary out of line with its neighbours on the rail
+                    // deliverable out of line with its neighbours on the rail
                     "md:min-h-[2.5rem]",
                     isSelected ? "text-ink" : "text-muted-foreground",
                     "group-hover:text-ink",
@@ -144,8 +144,15 @@ export function PlacementRail({ className }: { className?: string }) {
                 >
                   {stage.title}
                 </span>
-                <span className="mt-0.5 hidden text-xs leading-snug text-dim md:block">
-                  {stage.summary}
+                <span className="mt-0.5 block text-xs leading-snug text-caption md:hidden">
+                  {stage.deliverable}
+                </span>
+                {/* The deliverable, not the summary. When the duplicate
+                    "eight things you actually hold" list was removed from the
+                    homepage, this is where its value moved — a visitor who
+                    never clicks a node still sees what each stage produces. */}
+                <span className="mt-0.5 hidden text-xs leading-snug text-caption md:block">
+                  {stage.deliverable}
                 </span>
               </span>
             </button>
@@ -173,7 +180,7 @@ export function PlacementRail({ className }: { className?: string }) {
           </div>
 
           <div className="shrink-0 rounded-sm bg-surface-alt p-4 md:w-64">
-            <span className="font-mono text-xs tracking-[0.1em] text-dim uppercase">
+            <span className="font-mono text-xs tracking-[0.1em] text-caption uppercase">
               You end up with
             </span>
             <p className="mt-2 text-sm font-medium text-ink">
@@ -189,7 +196,7 @@ export function PlacementRail({ className }: { className?: string }) {
               setSelected(selected + 1);
               setFocused(selected + 1);
             }}
-            className="mt-6 inline-flex cursor-pointer items-center gap-1.5 rounded-sm text-sm font-medium text-primary underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="mt-6 inline-flex min-h-11 cursor-pointer items-center gap-1.5 rounded-sm text-sm font-medium text-primary underline-offset-4 outline-none hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
           >
             Next: {stages[selected + 1].title}
             <ArrowRight className="size-3.5" aria-hidden />

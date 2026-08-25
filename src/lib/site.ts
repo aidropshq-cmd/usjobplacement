@@ -15,6 +15,12 @@ export const siteConfig = {
     url: "https://zapkitt.com",
   },
   contact: {
+    // TODO(blocker): zapkitt.com has no MX record, so there is no mailbox on
+    // the domain — hello@zapkitt.com would silently swallow every enquiry.
+    // A Gmail address on a paid service handling resumes and immigration
+    // status is a real trust cost, but inventing an address that bounces is
+    // worse. Set up free forwarding (ImprovMX, or Cloudflare Email Routing),
+    // then change this one line and EMAIL_REPLY_TO / NOTIFY_TEAM_EMAILS.
     email: "aidropshq@gmail.com",
     /**
      * WhatsApp. Set `number` in full international E.164 form (digits only,
@@ -27,15 +33,21 @@ export const siteConfig = {
       display: "",
     },
   },
-  /** The single primary action across the site. */
+  /**
+   * Two strings, used verbatim everywhere. Eight variants of these existed
+   * across the codebase, which is how "demo call" and "career review" ended
+   * up naming the same thing in different places.
+   *
+   * The route stays /book-demo deliberately: that link has already been
+   * shared into WhatsApp and LinkedIn, and renaming it would 404 traffic
+   * that is mid-funnel. Only the words change.
+   */
   cta: {
-    label: "Check My Job Search Readiness — FREE",
-    shortLabel: "Check My Readiness",
+    label: "Check my job readiness — free",
     href: "/assessment",
   },
-  /** Secondary action. Talking to a person, for people who prefer that. */
   secondaryCta: {
-    label: "Book a Free Career Review",
+    label: "Book a free career review",
     href: "/book-demo",
   },
 } as const;

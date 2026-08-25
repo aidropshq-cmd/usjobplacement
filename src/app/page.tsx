@@ -9,14 +9,14 @@ import { EngagementTiers } from "@/components/sections/engagement-tiers";
 import { Faq } from "@/components/sections/faq";
 import { InterviewSupport } from "@/components/sections/interview-support";
 import { NeverPay } from "@/components/sections/never-pay";
+import { Testimonials } from "@/components/sections/testimonials";
 import { TrustStrip } from "@/components/sections/trust-strip";
 import { Container } from "@/components/layout/container";
 import { Eyebrow } from "@/components/layout/eyebrow";
 import { Section } from "@/components/layout/section";
 import { SectionHeading } from "@/components/layout/section-heading";
-import { WhatsAppIcon } from "@/components/icons/whatsapp";
 import { Button } from "@/components/ui/button";
-import { siteConfig, stages, whatsappChannelUrl } from "@/lib/site";
+import { siteConfig } from "@/lib/site";
 
 /** Resume → Job Matching → Applications → Interview → Offer. */
 const FLOW = [
@@ -45,9 +45,9 @@ export default function HomePage() {
                 place.
               </p>
 
-              {/* Deliberate hierarchy: the two buttons share a width so the
-                  stack reads as one block, and WhatsApp sits below as a
-                  lighter tertiary route rather than a third competing button. */}
+              {/* One primary, one secondary. WhatsApp lives in the nav and
+                  footer only — three buttons at equal weight is zero
+                  primaries, and the readiness score is the differentiator. */}
               <div className="mt-2 flex w-full max-w-md flex-col gap-3">
                 <Button size="cta" asChild className="w-full">
                   <Link href={siteConfig.cta.href}>
@@ -65,20 +65,9 @@ export default function HomePage() {
                     {siteConfig.secondaryCta.label}
                   </Link>
                 </Button>
-                {whatsappChannelUrl ? (
-                  <a
-                    href={whatsappChannelUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex min-h-11 items-center justify-center gap-2 rounded-sm text-sm font-medium text-muted-foreground underline-offset-4 outline-none hover:text-primary hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
-                  >
-                    <WhatsAppIcon className="size-[18px]" />
-                    Join WhatsApp Community
-                  </a>
-                ) : null}
               </div>
 
-              <p className="text-sm text-dim">
+              <p className="text-sm text-caption">
                 No salary commission • No hidden fees • No job guarantee
               </p>
 
@@ -90,7 +79,7 @@ export default function HomePage() {
                       {label}
                     </span>
                     {i < FLOW.length - 1 ? (
-                      <span className="text-dim" aria-hidden>
+                      <span className="text-caption" aria-hidden>
                         →
                       </span>
                     ) : null}
@@ -193,7 +182,10 @@ export default function HomePage() {
         </div>
       </Section>
 
-      {/* ---------- 12. Trust / proof ---------- */}
+      {/* ---------- 12. Proof ---------- */}
+      <Testimonials />
+
+      {/* ---------- 12b. Trust ---------- */}
       <Section tone="alt" divided>
         <SectionHeading
           eyebrow="Pricing, plainly"
@@ -256,41 +248,11 @@ export default function HomePage() {
               </Link>
             </Button>
           </div>
-          <p className="text-sm text-dim">
+          <p className="text-sm text-caption">
             We coach you before every interview round and debrief with you
             after. We prepare you — we are never on the call.
           </p>
         </div>
-      </Section>
-
-      {/* Deliverables, kept from the previous homepage. */}
-      <Section divided>
-        <SectionHeading
-          eyebrow="Deliverables"
-          title="Eight stages, eight things you actually hold"
-        />
-        <ol className="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-2">
-          {stages.map((stage, i) => (
-            <li
-              key={stage.id}
-              className="flex gap-4 border-t border-hairline pt-5"
-            >
-              <span
-                className="font-mono text-sm text-primary"
-                data-numeric
-                aria-hidden
-              >
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <span>
-                <span className="block text-h3 text-ink">{stage.title}</span>
-                <span className="mt-1.5 block text-sm text-muted-foreground">
-                  {stage.deliverable}
-                </span>
-              </span>
-            </li>
-          ))}
-        </ol>
       </Section>
     </main>
   );

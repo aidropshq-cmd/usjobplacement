@@ -42,7 +42,7 @@ export function DashboardPreview({ compact = false }: { compact?: boolean }) {
             >
               74
             </span>
-            <span className="font-mono text-sm text-dim">/ 100</span>
+            <span className="font-mono text-sm text-caption">/ 100</span>
           </p>
         </div>
       </div>
@@ -82,7 +82,7 @@ export function DashboardPreview({ compact = false }: { compact?: boolean }) {
             <span className="block font-mono text-2xl text-ink" data-numeric>
               {s.value}
             </span>
-            <span className="mt-0.5 block text-xs text-dim">{s.label}</span>
+            <span className="mt-0.5 block text-xs text-caption">{s.label}</span>
           </div>
         ))}
       </div>
@@ -91,14 +91,14 @@ export function DashboardPreview({ compact = false }: { compact?: boolean }) {
         <>
           <div className="mt-6 flex flex-col gap-2 border-t border-hairline pt-5 text-sm">
             <span className="flex items-center gap-2 text-muted-foreground">
-              <Target className="size-3.5 shrink-0 text-dim" aria-hidden />
+              <Target className="size-3.5 shrink-0 text-caption" aria-hidden />
               Target role:{" "}
               <span className="font-medium text-ink">
                 Senior DevOps Engineer
               </span>
             </span>
             <span className="flex items-center gap-2 text-muted-foreground">
-              <MapPin className="size-3.5 shrink-0 text-dim" aria-hidden />
+              <MapPin className="size-3.5 shrink-0 text-caption" aria-hidden />
               United States · Remote or hybrid
             </span>
           </div>
@@ -112,12 +112,12 @@ export function DashboardPreview({ compact = false }: { compact?: boolean }) {
                 <span className="min-w-0">
                   <span className="flex items-center gap-2 truncate text-sm font-medium text-ink">
                     <Briefcase
-                      className="size-3.5 shrink-0 text-dim"
+                      className="size-3.5 shrink-0 text-caption"
                       aria-hidden
                     />
                     {m.role}
                   </span>
-                  <span className="mt-0.5 block truncate text-xs text-dim">
+                  <span className="mt-0.5 block truncate text-xs text-caption">
                     {m.place}
                   </span>
                 </span>

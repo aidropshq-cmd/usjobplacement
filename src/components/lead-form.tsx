@@ -92,9 +92,9 @@ export function LeadForm() {
         <h3 className="mt-4 text-h3 text-ink">We have your details</h3>
         <p className="mt-3 max-w-[48ch] text-muted-foreground">
           A confirmation is on its way to your inbox. Someone will reply within
-          one business day to arrange your free demo call.
+          one business day to arrange your free career review.
         </p>
-        <p className="mt-4 text-sm text-dim">
+        <p className="mt-4 text-sm text-caption">
           Nothing arrived? Check spam, or email{" "}
           <a
             href={`mailto:${siteConfig.contact.email}`}
@@ -145,7 +145,7 @@ export function LeadForm() {
 
         <div className="flex flex-col gap-2">
           <Label htmlFor="phone">
-            Phone <span className="font-normal text-dim">(optional)</span>
+            Phone <span className="font-normal text-caption">(optional)</span>
           </Label>
           <Input
             id="phone"
@@ -204,7 +204,7 @@ export function LeadForm() {
         <div className="flex flex-col gap-2 sm:col-span-2">
           <Label htmlFor="target_roles">
             Target roles{" "}
-            <span className="font-normal text-dim">(optional)</span>
+            <span className="font-normal text-caption">(optional)</span>
           </Label>
           <Input
             id="target_roles"
@@ -219,7 +219,8 @@ export function LeadForm() {
 
         <div className="flex flex-col gap-2 sm:col-span-2">
           <Label htmlFor="linkedin_url">
-            LinkedIn <span className="font-normal text-dim">(optional)</span>
+            LinkedIn{" "}
+            <span className="font-normal text-caption">(optional)</span>
           </Label>
           <Input
             id="linkedin_url"
@@ -232,7 +233,7 @@ export function LeadForm() {
             id="linkedin_url-error"
             message={errors.linkedin_url?.message}
           />
-          <p className="text-sm text-dim">
+          <p className="text-sm text-caption">
             Send your resume by email once we reply — file uploads aren&apos;t
             switched on yet.
           </p>
@@ -241,7 +242,7 @@ export function LeadForm() {
         <div className="flex flex-col gap-2 sm:col-span-2">
           <Label htmlFor="message">
             Anything we should know?{" "}
-            <span className="font-normal text-dim">(optional)</span>
+            <span className="font-normal text-caption">(optional)</span>
           </Label>
           <Textarea id="message" rows={4} {...register("message")} />
           <FieldError id="message-error" message={errors.message?.message} />
@@ -272,12 +273,12 @@ export function LeadForm() {
             </>
           ) : (
             <>
-              Request my demo call
+              Book my career review
               <ArrowRight aria-hidden />
             </>
           )}
         </Button>
-        <p className="text-sm text-dim">
+        <p className="text-sm text-caption">
           Free, and nothing is charged on this call.
         </p>
       </div>

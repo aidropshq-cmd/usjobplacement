@@ -86,7 +86,7 @@ function Row({
   return (
     <div className="flex flex-col gap-3 border-t border-hairline py-6 first:border-t-0 sm:flex-row sm:items-start sm:gap-8">
       <div className="w-40 shrink-0 pt-1">
-        <span className="font-mono text-xs tracking-[0.1em] text-dim uppercase">
+        <span className="font-mono text-xs tracking-[0.1em] text-caption uppercase">
           {label}
         </span>
       </div>
@@ -126,8 +126,8 @@ export default function KitchenSinkPage() {
               />
               <div className="px-3 py-2 font-mono text-xs leading-relaxed">
                 <div className="text-ink">{s.name}</div>
-                <div className="text-dim">{s.value}</div>
-                <div className="mt-1 font-sans text-[11px] text-dim">
+                <div className="text-caption">{s.value}</div>
+                <div className="mt-1 font-sans text-[11px] text-caption">
                   {s.use}
                 </div>
               </div>
@@ -276,14 +276,14 @@ export default function KitchenSinkPage() {
           <div className="md:col-span-2">
             <Label>Resume</Label>
             <div className="mt-2 flex flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-input bg-card px-6 py-10 text-center">
-              <Upload className="size-5 text-dim" aria-hidden />
+              <Upload className="size-5 text-caption" aria-hidden />
               <p className="text-sm text-muted-foreground">
                 Drop your resume here, or{" "}
                 <span className="text-primary underline underline-offset-4">
                   browse files
                 </span>
               </p>
-              <p className="font-mono text-xs text-dim">
+              <p className="font-mono text-xs text-caption">
                 PDF or DOCX · up to 5 MB
               </p>
             </div>
@@ -483,7 +483,7 @@ export default function KitchenSinkPage() {
                   }`}
                 />
                 <span
-                  className="font-mono text-xs tracking-[0.08em] text-dim"
+                  className="font-mono text-xs tracking-[0.08em] text-caption"
                   data-numeric
                 >
                   {String(i + 1).padStart(2, "0")}
@@ -491,7 +491,7 @@ export default function KitchenSinkPage() {
                 <span className="mt-1 block text-sm font-semibold text-ink">
                   {stage.title}
                 </span>
-                <span className="mt-1 block text-xs text-dim">
+                <span className="mt-1 block text-xs text-caption">
                   {stage.summary}
                 </span>
               </li>
@@ -501,7 +501,7 @@ export default function KitchenSinkPage() {
       </Section>
 
       <Container className="py-10">
-        <p className="font-mono text-xs text-dim">
+        <p className="font-mono text-xs text-caption">
           Phase 01 complete · tokens, fonts, primitives, layout components
         </p>
       </Container>

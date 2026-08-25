@@ -23,6 +23,10 @@ export const faqs = [
     a: "Yes, including transfers. Whether you are cap-subject or already counted changes the strategy and when you can start, so that is one of the first things we establish. Again: search strategy, not legal advice.",
   },
   {
+    q: "Do you guarantee interview calls?",
+    a: "No. We can make your application stronger and better targeted, and that is what moves the odds — but whether a recruiter calls is their decision, not ours. Any service promising a number of interviews is promising something it does not control.",
+  },
+  {
     q: "Do you apply to jobs for candidates?",
     a: "We prepare and submit targeted applications matched to your profile and work authorisation, and every one is logged with the date, role, company and outcome so you can see exactly where your search stands. We do not mass-apply, and we do not misrepresent your experience anywhere.",
   },
@@ -39,8 +43,8 @@ export const faqs = [
     a: "Never. We run mock interviews and coaching before each round and debrief with you afterwards. Anyone offering to sit on a live interview is offering fraud: it voids offers, gets candidates blacklisted by employers and background-check vendors, and puts your status at risk.",
   },
   {
-    q: "Do you provide immigration or legal advice?",
-    a: "No. We plan job searches. We are not immigration attorneys and nothing on this site is legal advice. For anything about your status, eligibility or filings, speak to your DSO or a licensed immigration attorney.",
+    q: "Do you provide visa sponsorship or immigration advice?",
+    a: "No, to both. Sponsorship comes only from an employer willing and eligible to sponsor — it is never something we can provide or arrange. And we are not immigration attorneys: nothing on this site is legal advice. For anything about your status, eligibility or filings, speak to your DSO or a licensed immigration attorney.",
   },
 ];
 

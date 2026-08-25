@@ -18,7 +18,7 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 w-full max-w-[1120px] items-center gap-6 px-6 sm:px-8">
         <Link
           href="/"
-          className="flex items-baseline gap-2 rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          className="flex min-h-11 items-center gap-2 rounded-sm outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
         >
           <span className="text-base font-extrabold tracking-[-0.03em] text-ink">
             ZapKitt
@@ -28,33 +28,37 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <nav className="ml-auto hidden items-center gap-7 md:flex">
+        <nav className="ml-auto hidden items-center gap-7 lg:flex">
           {navLinks
             .filter((l) => l.live)
             .map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className="rounded-sm text-sm text-muted-foreground underline-offset-4 outline-none hover:text-ink focus-visible:ring-3 focus-visible:ring-ring/50"
+                className="inline-flex min-h-11 items-center rounded-sm text-sm text-muted-foreground underline-offset-4 outline-none hover:text-ink focus-visible:ring-3 focus-visible:ring-ring/50"
               >
                 {link.label}
               </Link>
             ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-2 md:ml-0">
-          <Button asChild variant="ghost" className="hidden lg:inline-flex">
+        <div className="ml-auto flex items-center gap-2 lg:ml-0">
+          <Button
+            asChild
+            variant="ghost"
+            className="hidden min-h-11 lg:inline-flex"
+          >
             <Link href={siteConfig.secondaryCta.href}>
               {siteConfig.secondaryCta.label}
             </Link>
           </Button>
-          <Button asChild className="hidden sm:inline-flex">
-            <Link href={siteConfig.cta.href}>{siteConfig.cta.shortLabel}</Link>
+          <Button asChild className="hidden min-h-11 sm:inline-flex">
+            <Link href={siteConfig.cta.href}>{siteConfig.cta.label}</Link>
           </Button>
 
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button variant="ghost" size="icon" className="size-11 lg:hidden">
                 <Menu />
                 <span className="sr-only">Open menu</span>
               </Button>
@@ -70,7 +74,7 @@ export function SiteHeader() {
                     <Link
                       key={link.href}
                       href={link.href}
-                      className="rounded-sm px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted hover:text-ink"
+                      className="flex min-h-11 items-center rounded-sm px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted hover:text-ink"
                     >
                       {link.label}
                     </Link>
@@ -78,9 +82,7 @@ export function SiteHeader() {
               </nav>
               <div className="mt-4 px-4">
                 <Button asChild size="cta" className="w-full">
-                  <Link href={siteConfig.cta.href}>
-                    {siteConfig.cta.shortLabel}
-                  </Link>
+                  <Link href={siteConfig.cta.href}>{siteConfig.cta.label}</Link>
                 </Button>
                 <Button
                   asChild

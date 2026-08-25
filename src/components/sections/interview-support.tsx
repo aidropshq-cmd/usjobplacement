@@ -51,7 +51,7 @@ export function InterviewSupport() {
             ["Focus", "Multi-region failover, cost control"],
           ].map(([k, v]) => (
             <div key={k} className="flex gap-3">
-              <dt className="w-20 shrink-0 text-dim">{k}</dt>
+              <dt className="w-20 shrink-0 text-caption">{k}</dt>
               <dd className="font-medium text-ink">{v}</dd>
             </div>
           ))}

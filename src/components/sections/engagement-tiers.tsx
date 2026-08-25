@@ -1,5 +1,13 @@
 import { Check } from "lucide-react";
 
+import { siteConfig } from "@/lib/site";
+
+/** The two canonical strings. Never write a third. */
+const CTA = {
+  readiness: siteConfig.cta.label,
+  review: siteConfig.secondaryCta.label,
+};
+
 /**
  * Engagement tiers.
  *
@@ -18,7 +26,8 @@ const TIERS = [
       "Your three highest-impact fixes",
       "Written action plan by email",
     ],
-    cta: { label: "Check my readiness", href: "/assessment" },
+    // Free starts with the readiness check, so it carries the primary.
+    cta: { label: CTA.readiness, href: "/assessment", primary: true },
     featured: false,
   },
   {
@@ -32,7 +41,9 @@ const TIERS = [
       "Application support",
       "Interview preparation",
     ],
-    cta: { label: "Book a free career review", href: "/book-demo" },
+    // Assisted and Full both begin with a conversation, so both carry the
+    // secondary. The button says what the tier actually starts.
+    cta: { label: CTA.review, href: "/book-demo", primary: false },
     featured: true,
   },
   {
@@ -47,7 +58,7 @@ const TIERS = [
       "Offer review",
       "Onboarding and first 90 days",
     ],
-    cta: { label: "Book a free career review", href: "/book-demo" },
+    cta: { label: CTA.review, href: "/book-demo", primary: false },
     featured: false,
   },
 ];
@@ -64,9 +75,13 @@ export function EngagementTiers() {
         >
           <div className="flex items-center justify-between gap-3">
             <h3 className="text-h3 text-ink">{tier.name}</h3>
+            {/* "Recommended" is our opinion and needs no data behind it.
+                "Most chosen" was a claim about other customers that nothing
+                supports. Styled as a quiet label rather than a badge, so it
+                reads as guidance and not as popularity. */}
             {tier.featured ? (
-              <span className="rounded-sm bg-tint px-2 py-1 font-mono text-[0.65rem] tracking-[0.1em] text-violet-ink uppercase">
-                Most chosen
+              <span className="rounded-sm border border-primary/30 px-2 py-1 font-mono text-[0.65rem] tracking-[0.1em] text-violet-ink uppercase">
+                Recommended
               </span>
             ) : null}
           </div>
@@ -87,8 +102,8 @@ export function EngagementTiers() {
           </ul>
           <a
             href={tier.cta.href}
-            className={`mt-6 inline-flex min-h-11 items-center justify-center rounded-sm px-4 text-sm font-semibold transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 ${
-              tier.featured
+            className={`mt-6 inline-flex min-h-11 items-center justify-center rounded-sm px-4 text-center text-sm font-semibold transition-colors outline-none focus-visible:ring-3 focus-visible:ring-ring/50 ${
+              tier.cta.primary
                 ? "bg-primary text-primary-foreground hover:bg-violet-hover"
                 : "border border-primary text-primary hover:bg-tint"
             }`}

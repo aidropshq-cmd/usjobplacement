@@ -11,7 +11,7 @@ export function DemoLabel({ className }: { className?: string }) {
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-sm bg-surface-alt px-2 py-1 font-mono text-[0.65rem] font-medium tracking-[0.1em] text-dim uppercase",
+        "inline-flex items-center rounded-sm bg-surface-alt px-2 py-1 font-mono text-[0.65rem] font-medium tracking-[0.1em] text-caption uppercase",
         className,
       )}
     >

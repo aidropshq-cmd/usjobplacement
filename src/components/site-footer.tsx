@@ -24,7 +24,7 @@ function FooterLinkItem({ link }: { link: FooterLink }) {
         <span>
           {link.label}
           {link.subtitle ? (
-            <span className="mt-0.5 block text-xs text-dim">
+            <span className="mt-0.5 block text-xs text-caption">
               {link.subtitle}
             </span>
           ) : null}
@@ -63,7 +63,7 @@ export function SiteFooter() {
 
           {footerColumns.map((col) => (
             <div key={col.title}>
-              <h2 className="font-mono text-xs font-medium tracking-[0.12em] text-dim uppercase">
+              <h2 className="font-mono text-xs font-medium tracking-[0.12em] text-caption uppercase">
                 {col.title}
               </h2>
               <ul className="mt-4 flex flex-col gap-2.5">
@@ -80,7 +80,7 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-12 flex flex-col gap-4 border-t border-hairline pt-6 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm text-dim">
+          <p className="text-sm text-caption">
             © {new Date().getFullYear()} ZapKitt. All rights reserved.
           </p>
           <a

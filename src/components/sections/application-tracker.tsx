@@ -44,13 +44,15 @@ export function ApplicationTracker() {
           <li key={stage} className="flex items-center gap-2">
             <span
               className={`rounded-sm px-2.5 py-1.5 text-xs font-medium ${
-                i < 4 ? "bg-tint text-violet-ink" : "bg-surface-alt text-dim"
+                i < 4
+                  ? "bg-tint text-violet-ink"
+                  : "bg-surface-alt text-caption"
               }`}
             >
               {stage}
             </span>
             {i < PIPELINE.length - 1 ? (
-              <span className="text-dim" aria-hidden>
+              <span className="text-caption" aria-hidden>
                 ›
               </span>
             ) : null}
@@ -73,7 +75,7 @@ export function ApplicationTracker() {
                   (h) => (
                     <th
                       key={h}
-                      className="border-b border-hairline bg-surface-alt px-5 py-2.5 text-left font-mono text-[0.65rem] font-medium tracking-[0.1em] text-dim uppercase"
+                      className="border-b border-hairline bg-surface-alt px-5 py-2.5 text-left font-mono text-[0.65rem] font-medium tracking-[0.1em] text-caption uppercase"
                     >
                       {h}
                     </th>

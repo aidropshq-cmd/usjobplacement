@@ -6,9 +6,9 @@ import { Eyebrow } from "@/components/layout/eyebrow";
 import { siteConfig, stages } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Book a free demo call",
+  title: "Book a free career review",
   description:
-    "A free walkthrough of the eight-stage placement process against your actual profile. No charge and no obligation.",
+    "A free walkthrough of the eight-stage process against your actual profile. No charge and no obligation.",
 };
 
 export default function BookDemoPage() {
@@ -20,7 +20,7 @@ export default function BookDemoPage() {
             <div className="flex flex-col gap-5">
               <Eyebrow>Free · no obligation</Eyebrow>
               <h1 className="max-w-[16ch] text-display">
-                Book a free demo call
+                Book a free career review
               </h1>
               <p className="max-w-[54ch] text-lg text-muted-foreground">
                 Thirty minutes. We walk through the eight stages against your
@@ -56,11 +56,11 @@ export default function BookDemoPage() {
                   </li>
                 ))}
               </ol>
-              <p className="mt-6 border-t border-hairline pt-5 text-sm text-dim">
+              <p className="mt-6 border-t border-hairline pt-5 text-sm text-caption">
                 We coach you before every interview round and debrief with you
                 after. We prepare you — we are never on the call.
               </p>
-              <p className="mt-4 text-sm text-dim">
+              <p className="mt-4 text-sm text-caption">
                 Prefer email?{" "}
                 <a
                   href={`mailto:${siteConfig.contact.email}`}

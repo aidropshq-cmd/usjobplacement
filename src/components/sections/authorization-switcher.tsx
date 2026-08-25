@@ -42,7 +42,7 @@ export function AuthorizationSwitcher() {
               </div>
 
               <div className="shrink-0 rounded-sm bg-surface-alt p-4 md:w-60">
-                <span className="font-mono text-xs tracking-[0.1em] text-dim uppercase">
+                <span className="font-mono text-xs tracking-[0.1em] text-caption uppercase">
                   Where we focus
                 </span>
                 <p className="mt-2 text-sm font-medium text-ink">
@@ -54,7 +54,9 @@ export function AuthorizationSwitcher() {
         </TabsContent>
       ))}
 
-      <p className="max-w-[68ch] text-sm text-dim">{immigrationDisclaimer}</p>
+      <p className="max-w-[68ch] text-sm text-caption">
+        {immigrationDisclaimer}
+      </p>
     </Tabs>
   );
 }
