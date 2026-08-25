@@ -98,6 +98,36 @@ Two phrases carry real risk and are settled policy, not style preferences:
 employer, several US states treat this as a licensed employment agency. That
 needs legal review before the page goes live. It does not block phases 00–03.
 
+## Resume storage (Cloudflare R2)
+
+Uploads stay off until these four variables exist on Render. The API reports
+its real state at `/api/health/` — `"uploads": false` means not configured,
+which is different from broken.
+
+Setup, once:
+
+1. Cloudflare dashboard -> R2 -> **Create bucket**. Any name.
+   **Leave public access disabled.** Nothing here should ever be public.
+2. R2 -> **Manage API tokens** -> create a token with _Object Read & Write_
+   scoped to that bucket. Copy the Access Key ID and Secret once; the secret
+   is not shown again.
+3. Account ID is on the R2 overview page, right-hand side.
+4. On Render, set `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`,
+   `R2_SECRET_ACCESS_KEY`, `R2_BUCKET_NAME`. Server-side only -- a
+   `NEXT_PUBLIC_` prefix would compile the credential into the browser bundle.
+5. Redeploy.
+
+Then verify, without opening a dashboard:
+
+```bash
+npm run verify:uploads
+```
+
+That runs the real lifecycle against production -- presigned URL, direct PUT,
+confirm, signed download, byte comparison, unsigned-URL refusal, delete -- and
+prints a pass or fail per step. It creates one candidate named
+"ZZ R2 VERIFY"; delete that row and its lead afterwards.
+
 ## Deploying
 
 Push to `main` → Vercel builds and deploys. The Django backend deploys

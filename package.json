@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "format": "prettier --write .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "verify:uploads": "node scripts/verify-resume-upload.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",
