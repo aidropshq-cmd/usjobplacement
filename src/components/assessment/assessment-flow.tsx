@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { track } from "@/lib/analytics";
-import { ApiError, submitLead } from "@/lib/api";
+import { ApiError, submitAssessment } from "@/lib/api";
 import { siteConfig } from "@/lib/site";
 import {
   emptyAnswers,
@@ -432,19 +432,23 @@ function Results({
       score: result.overall,
     });
     try {
-      await submitLead({
+      const byId = Object.fromEntries(
+        result.dimensions.map((d) => [d.id, d.score]),
+      );
+      await submitAssessment({
         full_name: form.name.trim(),
         email: form.email.trim(),
-        phone: "",
-        work_authorization: answers.workAuth || "other",
-        target_roles: answers.role,
-        linkedin_url: "",
-        message:
-          `Readiness assessment — overall ${result.overall}/100 (estimated from answers).\n` +
-          result.dimensions.map((d) => `${d.label}: ${d.score}`).join("\n") +
-          `\nExperience: ${answers.experience}\nWork mode: ${answers.workMode}` +
-          (answers.locations ? `\nLocations: ${answers.locations}` : ""),
-        website: "",
+        work_status_pref: answers.workAuth || "other",
+        target_role: answers.role,
+        experience_level: answers.experience,
+        work_mode: answers.workMode,
+        preferred_locations: answers.locations,
+        answers: { signals: answers.signals },
+        overall: result.overall,
+        resume_score: byId.resume ?? 0,
+        targeting_score: byId.targeting ?? 0,
+        ats_score: byId.ats ?? 0,
+        interview_score: byId.interview ?? 0,
       });
       setSent(true);
     } catch (err) {

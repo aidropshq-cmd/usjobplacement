@@ -152,3 +152,41 @@ export async function submitLead(input: LeadInput) {
 export async function submitContact(input: ContactInput) {
   return post("/api/contact/", input);
 }
+
+/**
+ * Structured assessment intake.
+ *
+ * Replaces smuggling the whole result into a Lead's free-text message. The
+ * backend upserts a Candidate, records the Assessment with the scores as
+ * numbers, and still creates the Lead — so the CRM view and the notification
+ * emails behave exactly as before.
+ */
+export type AssessmentIntake = {
+  full_name: string;
+  email: string;
+  work_status_pref: string;
+  target_role: string;
+  experience_level: string;
+  work_mode: string;
+  preferred_locations: string;
+  answers: Record<string, unknown>;
+  overall: number;
+  resume_score: number;
+  targeting_score: number;
+  ats_score: number;
+  interview_score: number;
+};
+
+const assessmentResponseSchema = z.object({
+  candidate_created: z.boolean(),
+  assessment: z.object({ id: z.number(), overall: z.number() }),
+});
+
+export async function submitAssessment(input: AssessmentIntake) {
+  const data = await post("/api/assessments/", {
+    ...input,
+    website: "",
+    source_path: typeof window === "undefined" ? "" : window.location.pathname,
+  });
+  return assessmentResponseSchema.parse(data);
+}
