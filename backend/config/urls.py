@@ -5,8 +5,8 @@ from leads.views import health
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include("leads.urls")),
     path("api/", include("candidates.urls")),
+    path("api/", include("leads.urls")),
     # Render's health check points here.
     path("healthz", health),
 ]

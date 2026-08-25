@@ -7,6 +7,9 @@ anywhere here, because none of it improves a search result and all of it
 would be sensitive data we would then have to protect, justify and delete.
 """
 
+import secrets
+from datetime import timedelta
+
 from django.db import models
 from django.utils import timezone
 
@@ -87,7 +90,10 @@ class Candidate(models.Model):
         score = 0
         if self.assessments.exists():
             score += 20
-        if self.resumes.filter(parse_status__in=["pending", "parsed"]).exists():
+        # Confirmed uploads only. A PENDING row means a presigned URL was
+        # issued and the browser never followed through — that is not a
+        # resume and must not score like one.
+        if self.resumes.filter(upload_status=Resume.UploadStatus.UPLOADED).exists():
             score += 20
         if self.target_role:
             score += 10
@@ -146,6 +152,19 @@ class Resume(models.Model):
     public URL for a resume, by design.
     """
 
+    class UploadStatus(models.TextChoices):
+        """The record must describe reality, not intent.
+
+        A presigned URL is permission to upload. If the browser never
+        follows through, the row stays PENDING and no interface may call it
+        a resume. Only a confirmed head_object moves it to UPLOADED.
+        """
+
+        PENDING = "pending", "Awaiting upload"
+        UPLOADED = "uploaded", "Uploaded"
+        FAILED = "failed", "Upload failed"
+        DELETED = "deleted", "Deleted"
+
     class ParseStatus(models.TextChoices):
         PENDING = "pending", "Awaiting parse"
         PARSED = "parsed", "Parsed"
@@ -158,15 +177,28 @@ class Resume(models.Model):
     storage_key = models.CharField(max_length=400, unique=True)
     original_filename = models.CharField(max_length=255)
     content_type = models.CharField(max_length=120)
-    size_bytes = models.PositiveIntegerField()
+    # Claimed by the client at intent, replaced with the value R2 reports
+    # once the upload is confirmed.
+    size_bytes = models.PositiveIntegerField(default=0)
     sha256 = models.CharField(max_length=64, blank=True)
 
+    upload_status = models.CharField(
+        max_length=12, choices=UploadStatus.choices, default=UploadStatus.PENDING
+    )
+    upload_error = models.TextField(blank=True)
+
+    # Parsing is Phase 3. Every row stays SKIPPED until that exists — the
+    # field is here so the later phase needs no migration, not because
+    # anything parses today.
     parse_status = models.CharField(
-        max_length=12, choices=ParseStatus.choices, default=ParseStatus.PENDING
+        max_length=12, choices=ParseStatus.choices, default=ParseStatus.SKIPPED
     )
     parse_error = models.TextField(blank=True)
 
     uploaded_at = models.DateTimeField(auto_now_add=True)
+    confirmed_at = models.DateTimeField(null=True, blank=True)
+    deleted_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         ordering = ["-uploaded_at"]
@@ -290,3 +322,60 @@ class Application(models.Model):
         self.status = self.Status.APPLIED
         self.applied_at = self.applied_at or timezone.now()
         self.save(update_fields=["status", "applied_at", "updated_at"])
+
+
+class CandidateAccessToken(models.Model):
+    """A scoped, expiring capability for one candidate.
+
+    Phase 2 needs ownership enforcement, but the magic-link session system is
+    a later phase. Rather than ship resume endpoints with no authorization —
+    or pretend an unauthenticated endpoint is safe because it takes an id —
+    a candidate gets a random, server-stored, revocable token scoped to
+    exactly one candidate row when they complete an assessment.
+
+    It is genuinely checked on every resume call, so "candidate A cannot
+    reach candidate B's resume" is enforced rather than assumed. When real
+    sessions land, this becomes redundant and gets deleted; nothing else
+    needs to change, because the views only ever ask "which candidate is
+    this request for?".
+    """
+
+    candidate = models.ForeignKey(
+        Candidate, on_delete=models.CASCADE, related_name="access_tokens"
+    )
+    token = models.CharField(max_length=64, unique=True, db_index=True)
+    expires_at = models.DateTimeField()
+    revoked = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self) -> str:
+        return f"token for {self.candidate.email}"
+
+    @property
+    def is_valid(self) -> bool:
+        return not self.revoked and self.expires_at > timezone.now()
+
+    @classmethod
+    def issue(cls, candidate: "Candidate") -> "CandidateAccessToken":
+        from django.conf import settings
+
+        return cls.objects.create(
+            candidate=candidate,
+            token=secrets.token_urlsafe(32),
+            expires_at=timezone.now()
+            + timedelta(hours=settings.CANDIDATE_TOKEN_TTL_HOURS),
+        )
+
+    @classmethod
+    def resolve(cls, raw: str) -> "Candidate | None":
+        """Returns the candidate this token belongs to, or None."""
+        if not raw:
+            return None
+        try:
+            record = cls.objects.select_related("candidate").get(token=raw)
+        except cls.DoesNotExist:
+            return None
+        return record.candidate if record.is_valid else None

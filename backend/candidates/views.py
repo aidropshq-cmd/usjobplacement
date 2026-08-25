@@ -9,7 +9,7 @@ from leads.models import Lead
 from leads.notifications import notify_new_lead
 from leads.views import client_ip
 
-from .models import Assessment, Candidate
+from .models import Assessment, Candidate, CandidateAccessToken
 from .serializers import AssessmentIntakeSerializer, AssessmentResultSerializer
 
 logger = logging.getLogger(__name__)
@@ -85,10 +85,16 @@ def create_assessment(request):
     except Exception:
         logger.exception("Notification failed for assessment lead id=%s", lead.pk)
 
+    # Scoped, expiring capability for this candidate only. It is what lets
+    # the resume endpoints enforce ownership before a login system exists.
+    access = CandidateAccessToken.issue(candidate)
+
     return Response(
         {
             "candidate_created": created,
             "assessment": AssessmentResultSerializer(assessment).data,
+            "candidate_token": access.token,
+            "token_expires_at": access.expires_at,
         },
         status=status.HTTP_201_CREATED,
     )

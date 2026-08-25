@@ -180,6 +180,7 @@ export type AssessmentIntake = {
 const assessmentResponseSchema = z.object({
   candidate_created: z.boolean(),
   assessment: z.object({ id: z.number(), overall: z.number() }),
+  candidate_token: z.string(),
 });
 
 export async function submitAssessment(input: AssessmentIntake) {
@@ -189,4 +190,67 @@ export async function submitAssessment(input: AssessmentIntake) {
     source_path: typeof window === "undefined" ? "" : window.location.pathname,
   });
   return assessmentResponseSchema.parse(data);
+}
+
+/* ----------------------------------------------------------- resume upload */
+
+/**
+ * Three calls, because storage cannot be trusted to have worked just because
+ * we asked for a URL:
+ *
+ *   1. intent   — server validates and returns a short-lived presigned PUT
+ *   2. PUT      — the browser sends the file straight to R2. It never passes
+ *                 through our servers, so nothing of it is logged anywhere.
+ *   3. confirm  — server checks the object really exists and that the bytes
+ *                 match the extension before the record says "uploaded"
+ *
+ * The file is not read, inspected or sent anywhere else by this code. In
+ * particular it never reaches analytics — see lib/analytics.ts, which only
+ * ever receives a size in bytes.
+ */
+export const RESUME_ACCEPT = ".pdf,.docx";
+export const RESUME_MAX_MB = 5;
+
+type UploadIntent = {
+  resume_id: number;
+  upload_url: string;
+  expires_in: number;
+};
+
+export async function uploadResume(
+  file: File,
+  candidateToken: string,
+  onStage?: (stage: "requesting" | "uploading" | "confirming") => void,
+): Promise<{ resumeId: number; filename: string }> {
+  onStage?.("requesting");
+  const intent = (await post("/api/documents/", {
+    candidate_token: candidateToken,
+    filename: file.name,
+    content_type: file.type,
+    size_bytes: file.size,
+  })) as UploadIntent;
+
+  onStage?.("uploading");
+  let put: Response;
+  try {
+    put = await fetch(intent.upload_url, {
+      method: "PUT",
+      headers: { "Content-Type": file.type },
+      body: file,
+    });
+  } catch {
+    throw new ApiError(
+      "The upload did not complete. Check your connection and try again.",
+    );
+  }
+  if (!put.ok) {
+    throw new ApiError("The upload did not complete. Please try again.");
+  }
+
+  onStage?.("confirming");
+  await post(`/api/documents/${intent.resume_id}/confirm`, {
+    candidate_token: candidateToken,
+  });
+
+  return { resumeId: intent.resume_id, filename: file.name };
 }

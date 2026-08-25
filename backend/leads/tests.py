@@ -205,14 +205,7 @@ class EndpointAvailabilityTests(ApiTestCase):
         self.assertEqual(response.status_code, 200)
         body = response.json()
         self.assertEqual(body["status"], "ok")
-        # Uploads stay false until object storage exists.
-        self.assertFalse(body["uploads"])
-
-    def test_document_upload_is_honestly_unavailable(self):
-        """503 rather than accepting a file Render's disk would lose."""
-        response = self.client.post("/api/documents/", {}, content_type="application/json")
-
-        self.assertEqual(response.status_code, 503)
+        self.assertIn("uploads", body)
 
 
 class NotificationTests(TestCase):

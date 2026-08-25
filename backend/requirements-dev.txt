@@ -1,0 +1,7 @@
+# Test-only. NOT installed by Render — build.sh installs requirements.txt.
+-r requirements.txt
+
+# Faithful in-process S3 mock. R2 is S3-compatible, so tests exercise the
+# real boto3 calls (presign, head_object, delete_object) without touching a
+# live bucket or needing credentials in CI.
+moto[s3,server]==5.0.22

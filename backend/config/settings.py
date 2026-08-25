@@ -177,6 +177,32 @@ WHATSAPP_ACCESS_TOKEN = os.getenv("WHATSAPP_ACCESS_TOKEN", "")
 WHATSAPP_TEMPLATE_LEAD = os.getenv("WHATSAPP_TEMPLATE_LEAD", "")
 NOTIFY_TEAM_WHATSAPP = env_list("NOTIFY_TEAM_WHATSAPP")
 
+# ---------------------------------------------------------------- storage (R2)
+
+# Private Cloudflare R2 bucket for resumes. Secrets are server-side only and
+# must never carry a NEXT_PUBLIC_ prefix — that would compile them into the
+# browser bundle. The bucket has no public access; every URL is presigned and
+# short-lived.
+R2_ACCOUNT_ID = os.getenv("R2_ACCOUNT_ID", "")
+R2_ACCESS_KEY_ID = os.getenv("R2_ACCESS_KEY_ID", "")
+R2_SECRET_ACCESS_KEY = os.getenv("R2_SECRET_ACCESS_KEY", "")
+R2_BUCKET_NAME = os.getenv("R2_BUCKET_NAME", "")
+R2_ENDPOINT = os.getenv(
+    "R2_ENDPOINT",
+    f"https://{R2_ACCOUNT_ID}.r2.cloudflarestorage.com" if R2_ACCOUNT_ID else "",
+)
+
+# Long enough to upload a resume on a poor connection, short enough that a
+# leaked URL is worthless within minutes.
+R2_UPLOAD_URL_TTL = int(os.getenv("R2_UPLOAD_URL_TTL", "600"))
+R2_DOWNLOAD_URL_TTL = int(os.getenv("R2_DOWNLOAD_URL_TTL", "300"))
+
+# Configurable ceiling. A resume that will not fit in 5 MB is not a resume.
+RESUME_MAX_BYTES = int(os.getenv("RESUME_MAX_BYTES", str(5 * 1024 * 1024)))
+
+# How long a candidate's scoped resume token stays valid.
+CANDIDATE_TOKEN_TTL_HOURS = int(os.getenv("CANDIDATE_TOKEN_TTL_HOURS", "24"))
+
 SITE_URL = os.getenv("SITE_URL", "https://usjobplacement.zapkitt.com")
 ADMIN_URL = os.getenv("ADMIN_URL", "https://usjobplacement-api.onrender.com/admin/")
 

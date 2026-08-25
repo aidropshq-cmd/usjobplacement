@@ -16,7 +16,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { track } from "@/lib/analytics";
-import { ApiError, submitAssessment } from "@/lib/api";
+import {
+  ApiError,
+  RESUME_ACCEPT,
+  RESUME_MAX_MB,
+  submitAssessment,
+  uploadResume,
+} from "@/lib/api";
 import { siteConfig } from "@/lib/site";
 import {
   emptyAnswers,
@@ -72,7 +78,7 @@ export function AssessmentFlow() {
   const [step, setStep] = React.useState(0);
   const [answers, setAnswers] = React.useState<AssessmentAnswers>(emptyAnswers);
   const [customRole, setCustomRole] = React.useState("");
-  const [resumeName, setResumeName] = React.useState("");
+  const [resumeFile, setResumeFile] = React.useState<File | null>(null);
   const [result, setResult] = React.useState<AssessmentResult | null>(null);
 
   React.useEffect(() => {
@@ -113,7 +119,9 @@ export function AssessmentFlow() {
   };
 
   if (result) {
-    return <Results answers={answers} result={result} />;
+    return (
+      <Results answers={answers} result={result} resumeFile={resumeFile} />
+    );
   }
 
   return (
@@ -306,38 +314,34 @@ export function AssessmentFlow() {
                   <input
                     id="resume"
                     type="file"
-                    accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    accept={RESUME_ACCEPT}
                     className="mt-2 block w-full text-sm text-muted-foreground file:mr-3 file:cursor-pointer file:rounded-sm file:border file:border-input file:bg-card file:px-3 file:py-1.5 file:text-sm file:font-medium file:text-ink"
                     onChange={(e) => {
                       const file = e.target.files?.[0];
-                      if (!file) return setResumeName("");
-                      if (file.size > 5 * 1024 * 1024) {
+                      if (!file) return setResumeFile(null);
+                      if (file.size > RESUME_MAX_MB * 1024 * 1024) {
                         toast.error(
-                          "That file is over 5 MB. Try a smaller one.",
+                          `That file is over ${RESUME_MAX_MB} MB. Try a smaller one.`,
                         );
                         e.target.value = "";
-                        return setResumeName("");
+                        return setResumeFile(null);
                       }
-                      setResumeName(file.name);
-                      track("resume_uploaded", { size: file.size });
+                      // Held in the browser only. The upload happens after
+                      // the email step, because no candidate exists to own
+                      // the file until then.
+                      setResumeFile(file);
                     }}
                   />
-                  {resumeName ? (
-                    <p className="mt-2 text-sm text-ink">{resumeName}</p>
+                  {resumeFile ? (
+                    <p className="mt-2 text-sm text-ink">{resumeFile.name}</p>
                   ) : null}
                   <p className="mt-3 flex items-start gap-2 text-sm text-dim">
                     <Info className="mt-0.5 size-3.5 shrink-0" aria-hidden />
                     <span>
-                      Resume storage is not switched on yet, so the file stays
-                      in your browser and is not uploaded. Your score does not
-                      use it. Email it to{" "}
-                      <a
-                        href={`mailto:${siteConfig.contact.email}`}
-                        className="text-primary underline underline-offset-4"
-                      >
-                        {siteConfig.contact.email}
-                      </a>{" "}
-                      and a person will review it.
+                      PDF or DOCX, up to {RESUME_MAX_MB} MB. It is uploaded
+                      after you enter your email on the next screen, stored
+                      privately, and never sent to any third party or used for
+                      analytics. Your score does not use it.
                     </span>
                   </p>
                 </div>
@@ -407,17 +411,27 @@ function ScoreBar({
   );
 }
 
+type UploadState =
+  | { kind: "none" }
+  | { kind: "busy"; stage: "requesting" | "uploading" | "confirming" }
+  | { kind: "done"; filename: string }
+  | { kind: "error"; message: string };
+
 function Results({
   answers,
   result,
+  resumeFile,
 }: {
   answers: AssessmentAnswers;
   result: AssessmentResult;
+  resumeFile: File | null;
 }) {
   const [sent, setSent] = React.useState(false);
   const [busy, setBusy] = React.useState(false);
   const [form, setForm] = React.useState({ name: "", email: "", phone: "" });
   const [error, setError] = React.useState("");
+  const [upload, setUpload] = React.useState<UploadState>({ kind: "none" });
+  const [token, setToken] = React.useState("");
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -435,7 +449,7 @@ function Results({
       const byId = Object.fromEntries(
         result.dimensions.map((d) => [d.id, d.score]),
       );
-      await submitAssessment({
+      const created = await submitAssessment({
         full_name: form.name.trim(),
         email: form.email.trim(),
         work_status_pref: answers.workAuth || "other",
@@ -450,7 +464,15 @@ function Results({
         ats_score: byId.ats ?? 0,
         interview_score: byId.interview ?? 0,
       });
+      setToken(created.candidate_token);
       setSent(true);
+
+      // The candidate only exists once they give an email, so the upload can
+      // only happen now. It is reported separately from the assessment: a
+      // failed upload must not make the whole submission look failed.
+      if (resumeFile) {
+        void runUpload(resumeFile, created.candidate_token);
+      }
     } catch (err) {
       setError(
         err instanceof ApiError
@@ -461,6 +483,57 @@ function Results({
       setBusy(false);
     }
   };
+
+  async function runUpload(file: File, candidateToken: string) {
+    setUpload({ kind: "busy", stage: "requesting" });
+    try {
+      const done = await uploadResume(file, candidateToken, (stage) =>
+        setUpload({ kind: "busy", stage }),
+      );
+      setUpload({ kind: "done", filename: done.filename });
+      // Size only. The file's contents never reach analytics.
+      track("resume_uploaded", { size: file.size });
+    } catch (err) {
+      setUpload({
+        kind: "error",
+        message:
+          err instanceof ApiError
+            ? err.message
+            : "The upload did not complete. You can try again.",
+      });
+    }
+  }
+
+  const uploadNotice =
+    upload.kind === "busy" ? (
+      <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+        <Loader2 className="size-4 animate-spin" aria-hidden />
+        {upload.stage === "requesting" && "Preparing your upload…"}
+        {upload.stage === "uploading" && "Uploading your resume…"}
+        {upload.stage === "confirming" && "Confirming the upload…"}
+      </p>
+    ) : upload.kind === "done" ? (
+      <p className="mt-4 flex items-start gap-2 text-sm text-stage-done">
+        <CheckCircle2 className="mt-0.5 size-4 shrink-0" aria-hidden />
+        <span>
+          <strong className="font-medium">{upload.filename}</strong> uploaded
+          and stored privately.
+        </span>
+      </p>
+    ) : upload.kind === "error" ? (
+      <div className="mt-4 rounded-sm bg-stage-blocked-tint px-4 py-3">
+        <p className="text-sm text-stage-blocked">{upload.message}</p>
+        {resumeFile ? (
+          <button
+            type="button"
+            onClick={() => void runUpload(resumeFile, token)}
+            className="mt-2 cursor-pointer rounded-sm text-sm font-medium text-primary underline underline-offset-4 outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+          >
+            Try the upload again
+          </button>
+        ) : null}
+      </div>
+    ) : null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -535,6 +608,7 @@ function Results({
             A person reviews your answers and replies within one business day.
             Nothing is charged for this.
           </p>
+          {uploadNotice}
           <ul className="mt-5 flex flex-col gap-2.5 text-sm">
             {[
               "Email your resume so it can be reviewed alongside this",

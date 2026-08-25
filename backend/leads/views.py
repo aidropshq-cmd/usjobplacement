@@ -6,6 +6,8 @@ from rest_framework.decorators import api_view
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 
+from candidates import storage
+
 from .models import ContactMessage, Lead
 from .notifications import notify_contact_message, notify_new_lead
 from .serializers import ContactMessageSerializer, LeadSerializer
@@ -62,32 +64,13 @@ class ContactMessageCreateView(CreateAPIView):
 def health(request):
     """Render pings this. Also the fastest way to tell whether the service is
     awake — a free-tier instance sleeps after inactivity and the first request
-    back pays a cold start."""
+    back pays a cold start. Every flag reflects live configuration."""
     return Response(
         {
             "status": "ok",
             "email": bool(settings.RESEND_API_KEY),
             "whatsapp": settings.WHATSAPP_ENABLED,
-            "uploads": False,  # no object storage configured yet
+            # Reports the real configuration state rather than a constant.
+            "uploads": storage.is_configured(),
         }
-    )
-
-
-@api_view(["POST"])
-def upload_document(request):
-    """Deliberately unavailable.
-
-    Render's filesystem is ephemeral, so a file accepted here would be lost on
-    the next deploy. Returning 503 is honest; accepting the upload and quietly
-    dropping the file would not be. Wire django-storages to S3 or R2, then
-    implement this.
-    """
-    return Response(
-        {
-            "detail": (
-                "File uploads are not enabled yet. Email your resume to "
-                f"{settings.EMAIL_REPLY_TO} and we will attach it to your record."
-            )
-        },
-        status=status.HTTP_503_SERVICE_UNAVAILABLE,
     )

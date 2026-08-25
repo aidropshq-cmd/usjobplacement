@@ -7,3 +7,6 @@ gunicorn==23.0.0
 whitenoise==6.8.2
 python-dotenv==1.0.1
 requests==2.32.3
+# S3-compatible client. R2 speaks the S3 API, so this is the same library
+# we would use for S3 -- swapping providers later is an endpoint change.
+boto3==1.35.76
