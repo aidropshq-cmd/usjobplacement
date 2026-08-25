@@ -371,3 +371,102 @@ class StorageNotConfiguredTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 503)
+
+
+@mock_aws
+@override_settings(**R2_TEST)
+class AccountDeletionTests(TestCase):
+    """Step 11 of the verification workflow, and the mechanism behind the
+    privacy commitment."""
+
+    def setUp(self):
+        super().setUp()
+        cache.clear()
+        self.s3 = boto3.client("s3", region_name="us-east-1")
+        self.s3.create_bucket(Bucket=BUCKET)
+
+        self.alice = Candidate.objects.create(
+            email="alice@example.com", full_name="Alice"
+        )
+        self.bob = Candidate.objects.create(email="bob@example.com", full_name="Bob")
+        self.alice_token = CandidateAccessToken.issue(self.alice).token
+        self.bob_token = CandidateAccessToken.issue(self.bob).token
+
+    def _resume_for(self, candidate, key_suffix):
+        key = f"candidate/{candidate.id}/resumes/{key_suffix}.pdf"
+        self.s3.put_object(Bucket=BUCKET, Key=key, Body=PDF_BYTES)
+        return Resume.objects.create(
+            candidate=candidate,
+            storage_key=key,
+            original_filename="cv.pdf",
+            content_type="application/pdf",
+            size_bytes=len(PDF_BYTES),
+            upload_status=Resume.UploadStatus.UPLOADED,
+        )
+
+    def test_deletes_candidate_files_and_lead_rows(self):
+        from leads.models import Lead
+
+        self._resume_for(self.alice, "aaa")
+        Lead.objects.create(full_name="Alice", email="Alice@Example.com")
+
+        response = self.client.delete(
+            "/api/candidates/me", HTTP_AUTHORIZATION=f"Bearer {self.alice_token}"
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["files_removed"], 1)
+        self.assertEqual(response.json()["lead_rows_removed"], 1)
+        self.assertFalse(Candidate.objects.filter(email="alice@example.com").exists())
+        self.assertEqual(Lead.objects.count(), 0)
+        # And the file is genuinely gone, not merely unreferenced.
+        self.assertEqual(self.s3.list_objects_v2(Bucket=BUCKET).get("Contents", []), [])
+
+    def test_cascades_to_related_rows(self):
+        from .models import Assessment
+
+        self._resume_for(self.alice, "bbb")
+        Assessment.objects.create(
+            candidate=self.alice, overall=50, resume_score=50, targeting_score=50,
+            ats_score=50, interview_score=50,
+        )
+
+        self.client.delete(
+            "/api/candidates/me", HTTP_AUTHORIZATION=f"Bearer {self.alice_token}"
+        )
+
+        self.assertEqual(Assessment.objects.count(), 0)
+        self.assertEqual(Resume.objects.count(), 0)
+        self.assertEqual(CandidateAccessToken.objects.filter(
+            token=self.alice_token).count(), 0)
+
+    def test_one_candidate_cannot_delete_another(self):
+        self._resume_for(self.bob, "ccc")
+
+        response = self.client.delete(
+            "/api/candidates/me", HTTP_AUTHORIZATION=f"Bearer {self.alice_token}"
+        )
+
+        # Alice's own (empty) account goes; Bob is untouched.
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Candidate.objects.filter(email="bob@example.com").exists())
+        self.assertEqual(Resume.objects.filter(candidate=self.bob).count(), 1)
+
+    def test_unauthenticated_deletion_is_refused(self):
+        response = self.client.delete("/api/candidates/me")
+
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(Candidate.objects.count(), 2)
+
+    def test_a_failed_file_removal_deletes_nothing(self):
+        """Partial deletion reported as success would be worse than an error."""
+        self._resume_for(self.alice, "ddd")
+
+        with patch("candidates.account_views.storage.delete", return_value=False):
+            response = self.client.delete(
+                "/api/candidates/me", HTTP_AUTHORIZATION=f"Bearer {self.alice_token}"
+            )
+
+        self.assertEqual(response.status_code, 502)
+        self.assertTrue(response.json()["retryable"])
+        self.assertTrue(Candidate.objects.filter(email="alice@example.com").exists())

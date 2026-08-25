@@ -10,9 +10,9 @@
  *   node scripts/verify-resume-upload.mjs --api http://127.0.0.1:8000
  *
  * It creates one clearly-labelled test candidate so it can obtain a scoped
- * token the way a real person would. The resume it uploads is deleted at the
- * end; the candidate and lead rows are left behind and named "ZZ R2 VERIFY"
- * so they are obvious to remove from Django admin.
+ * token the way a real person would, then deletes everything it created —
+ * the uploaded object, the resume record, the candidate, and the lead row.
+ * A verification that leaves debris behind is one people stop running.
  */
 
 const argv = process.argv.slice(2);
@@ -206,13 +206,36 @@ if (afterDelete.status !== 200)
   pass(`download refused after deletion (${afterDelete.status})`);
 else fail("a deleted resume still produced a download URL");
 
+// ------------------------------------------------------------ 11. clean up
+const cleanup = await json("/api/candidates/me", {
+  method: "DELETE",
+  headers: auth,
+});
+if (cleanup.status === 200 && cleanup.body?.deleted) {
+  pass(
+    `test candidate removed (${cleanup.body.files_removed} file(s), ` +
+      `${cleanup.body.lead_rows_removed} lead row(s)) — nothing left behind`,
+  );
+} else {
+  fail(`cleanup returned ${cleanup.status}: ${JSON.stringify(cleanup.body)}`);
+}
+
+// The token belonged to a candidate that no longer exists.
+const afterCleanup = await json("/api/documents/", {
+  method: "POST",
+  headers: auth,
+  body: JSON.stringify({ filename: "x.pdf", size_bytes: 100 }),
+});
+if (afterCleanup.status === 403)
+  pass("the candidate's token stopped working once the account was removed");
+else fail(`token still worked after deletion (${afterCleanup.status})`);
+
 // ----------------------------------------------------------------- summary
 console.log(
   failures === 0
     ? `
-[32mAll checks passed.[0m Resume upload works end to end in production.
-` +
-        `Remove the "ZZ R2 VERIFY" candidate and lead rows from Django admin.
+[32mAll checks passed.[0m Resume upload works end to end in ` +
+        `production, and the verification cleaned up after itself.
 `
     : `
 [31m${failures} check(s) failed.[0m

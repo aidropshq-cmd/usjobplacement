@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import resume_views, views
+from . import account_views, resume_views, views
 
 urlpatterns = [
     path("assessments/", views.create_assessment, name="assessment-create"),
@@ -17,4 +17,7 @@ urlpatterns = [
         name="resume-download",
     ),
     path("documents/<int:resume_id>", resume_views.delete_resume, name="resume-delete"),
+    # Self-deletion. Closes step 11 of the verification workflow and gives the
+    # privacy commitment an actual mechanism.
+    path("candidates/me", account_views.delete_me, name="candidate-delete"),
 ]

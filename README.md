@@ -123,10 +123,14 @@ Then verify, without opening a dashboard:
 npm run verify:uploads
 ```
 
-That runs the real lifecycle against production -- presigned URL, direct PUT,
-confirm, signed download, byte comparison, unsigned-URL refusal, delete -- and
-prints a pass or fail per step. It creates one candidate named
-"ZZ R2 VERIFY"; delete that row and its lead afterwards.
+That runs the real lifecycle against production and prints a pass or fail per
+step: presigned URL, direct PUT to storage, confirm, signed download,
+byte-for-byte comparison, unsigned-URL refusal, delete, and refusal to
+re-issue a URL for a deleted resume. Nothing is mocked.
+
+It deletes everything it created, including the candidate and lead rows, so
+running it leaves no residue. A verification that leaves debris behind is one
+people stop running.
 
 ## Deploying
 
