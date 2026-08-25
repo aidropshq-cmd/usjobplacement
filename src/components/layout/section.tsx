@@ -24,7 +24,7 @@ export function Section({
   return (
     <section
       className={cn(
-        "py-16 sm:py-24",
+        "scroll-mt-20 py-16 sm:py-24",
         tone === "alt" && "bg-surface-alt",
         tone === "tint" && "bg-tint",
         divided && "border-t border-hairline",

@@ -30,11 +30,16 @@ const facts = [
     label: "people on your call",
     note: "We coach you before, never during",
   },
+  {
+    figure: "4",
+    label: "readiness dimensions",
+    note: "Resume, targeting, ATS, interview",
+  },
 ];
 
 export function TrustStrip() {
   return (
-    <dl className="grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-4">
+    <dl className="grid grid-cols-2 gap-x-6 gap-y-8 lg:grid-cols-5">
       {facts.map((fact) => (
         <div key={fact.label} className="border-t border-hairline pt-5">
           <dt className="sr-only">{fact.label}</dt>

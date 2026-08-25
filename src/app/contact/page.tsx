@@ -4,7 +4,6 @@ import { ContactForm } from "@/components/contact-form";
 import { ContactLinks } from "@/components/contact-links";
 import { Container } from "@/components/layout/container";
 import { Eyebrow } from "@/components/layout/eyebrow";
-import { siteConfig } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Contact",

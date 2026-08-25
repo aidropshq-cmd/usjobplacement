@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // The Django backend is not a JS project. Without this, ESLint walks
+    // backend/.venv and reports 159 errors inside vendored jQuery and DRF
+    // bundles, which buries anything real in our own source.
+    "backend/**",
+    "**/.venv/**",
   ]),
 ]);
 

@@ -6,9 +6,9 @@
  */
 export const siteConfig = {
   name: "ZapKitt US Job Placement",
-  title: "End-to-end US job placement, without the salary commission",
+  title: "Your US IT job search, managed end-to-end",
   description:
-    "Profile building, targeted applications, resume and LinkedIn rewrites, interview coaching, background verification guidance and offer support — one flat engagement, no percentage of your salary.",
+    "Resume optimization, targeted job matching, application support, interview preparation, offer review and onboarding — all in one place. No salary commission, no hidden fees, no job guarantee.",
   url: "https://usjobplacement.zapkitt.com",
   parent: {
     name: "ZapKitt",
@@ -27,8 +27,15 @@ export const siteConfig = {
       display: "",
     },
   },
+  /** The single primary action across the site. */
   cta: {
-    label: "Book a free demo call",
+    label: "Check My Job Search Readiness — FREE",
+    shortLabel: "Check My Readiness",
+    href: "/assessment",
+  },
+  /** Secondary action. Talking to a person, for people who prefer that. */
+  secondaryCta: {
+    label: "Book a Free Career Review",
     href: "/book-demo",
   },
 } as const;
@@ -42,10 +49,10 @@ export const siteConfig = {
  * true in phase 04 as each page ships; nothing else needs to change.
  */
 export const navLinks = [
-  { label: "Process", href: "/process", live: true },
-  { label: "Pricing", href: "/pricing", live: false },
-  { label: "Success stories", href: "/success-stories", live: false },
-  { label: "FAQ", href: "/faq", live: false },
+  { label: "How It Works", href: "/process", live: true },
+  { label: "Readiness", href: "/assessment", live: true },
+  { label: "Pricing", href: "/#pricing", live: true },
+  { label: "FAQ", href: "/#faq", live: true },
   { label: "Contact", href: "/contact", live: true },
 ] as const;
 
@@ -83,7 +90,8 @@ export const footerColumns: { title: string; links: FooterLink[] }[] = [
   {
     title: "Service",
     links: [
-      { label: "The process", href: "/process", live: true },
+      { label: "How it works", href: "/process", live: true },
+      { label: "Readiness assessment", href: "/assessment", live: true },
       { label: "What we do", href: "/services", live: false },
       { label: "Pricing", href: "/pricing", live: false },
       { label: "Success stories", href: "/success-stories", live: false },
@@ -94,7 +102,7 @@ export const footerColumns: { title: string; links: FooterLink[] }[] = [
     links: [
       { label: "FAQ", href: "/faq", live: false },
       { label: "Contact", href: "/contact", live: true },
-      { label: "Book a free demo call", href: "/book-demo", live: true },
+      { label: "Book a free career review", href: "/book-demo", live: true },
       {
         label: "WhatsApp channel",
         href: whatsappChannelUrl,

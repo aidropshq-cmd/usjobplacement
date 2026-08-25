@@ -126,7 +126,7 @@ export default function ProcessPage() {
       <Section tone="tint" divided>
         <div className="flex flex-col items-start gap-6">
           <h2 className="max-w-[20ch] text-h2">
-            Want to see where you'd start?
+            Want to see where you&rsquo;d start?
           </h2>
           <p className="max-w-[56ch] text-muted-foreground">
             The demo call is a walkthrough of these eight stages against your

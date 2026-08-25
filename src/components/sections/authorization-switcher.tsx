@@ -20,7 +20,7 @@ export function AuthorizationSwitcher() {
           <TabsTrigger
             key={auth.id}
             value={auth.id}
-            className="cursor-pointer px-3 py-1.5 text-sm"
+            className="min-h-10 cursor-pointer px-3.5 py-2 text-sm"
           >
             {auth.label}
           </TabsTrigger>

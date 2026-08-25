@@ -43,8 +43,13 @@ export function SiteHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2 md:ml-0">
+          <Button asChild variant="ghost" className="hidden lg:inline-flex">
+            <Link href={siteConfig.secondaryCta.href}>
+              {siteConfig.secondaryCta.label}
+            </Link>
+          </Button>
           <Button asChild className="hidden sm:inline-flex">
-            <Link href={siteConfig.cta.href}>{siteConfig.cta.label}</Link>
+            <Link href={siteConfig.cta.href}>{siteConfig.cta.shortLabel}</Link>
           </Button>
 
           <Sheet>
@@ -73,7 +78,19 @@ export function SiteHeader() {
               </nav>
               <div className="mt-4 px-4">
                 <Button asChild size="cta" className="w-full">
-                  <Link href={siteConfig.cta.href}>{siteConfig.cta.label}</Link>
+                  <Link href={siteConfig.cta.href}>
+                    {siteConfig.cta.shortLabel}
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  size="cta"
+                  variant="outline"
+                  className="mt-2 w-full"
+                >
+                  <Link href={siteConfig.secondaryCta.href}>
+                    {siteConfig.secondaryCta.label}
+                  </Link>
                 </Button>
               </div>
             </SheetContent>
