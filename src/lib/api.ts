@@ -254,3 +254,75 @@ export async function uploadResume(
 
   return { resumeId: intent.resume_id, filename: file.name };
 }
+
+/* ------------------------------------------------------- parsed resume fields */
+
+/**
+ * Review and apply extracted fields.
+ *
+ * The server stages everything the parser found; nothing reaches a profile
+ * until `applyExtractions` names a field explicitly. The value sent is what
+ * gets written, so an edit here beats whatever the parser guessed.
+ */
+export type Extraction = {
+  field: string;
+  value: string | number | string[];
+  confidence: number;
+  applicable: boolean;
+  current_value: string | string[] | null;
+  confirmed: boolean;
+};
+
+const extractionsSchema = z.object({
+  parse_status: z.string(),
+  parse_error: z.string(),
+  extractions: z.array(
+    z.object({
+      field: z.string(),
+      value: z.union([z.string(), z.number(), z.array(z.string())]),
+      confidence: z.number(),
+      applicable: z.boolean(),
+      current_value: z
+        .union([z.string(), z.array(z.string())])
+        .nullable()
+        .optional(),
+      confirmed: z.boolean(),
+    }),
+  ),
+});
+
+export async function getExtractions(resumeId: number, candidateToken: string) {
+  const response = await fetch(
+    `${API_URL}/api/documents/${resumeId}/extractions`,
+    { headers: { Authorization: `Bearer ${candidateToken}` } },
+  );
+  if (!response.ok) {
+    throw new ApiError("Could not load what we read from your resume.");
+  }
+  return extractionsSchema.parse(await response.json());
+}
+
+export async function applyExtractions(
+  resumeId: number,
+  candidateToken: string,
+  fields: Record<string, string | number | string[]>,
+) {
+  const response = await fetch(
+    `${API_URL}/api/documents/${resumeId}/extractions/apply`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${candidateToken}`,
+      },
+      body: JSON.stringify({ fields }),
+    },
+  );
+  const body = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new ApiError(
+      (body as { detail?: string }).detail ?? "Could not save those changes.",
+    );
+  }
+  return body as { applied: Record<string, unknown>; ignored: string[] };
+}

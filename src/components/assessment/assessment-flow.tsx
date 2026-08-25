@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
+import { ResumeReview } from "@/components/assessment/resume-review";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -414,7 +415,7 @@ function ScoreBar({
 type UploadState =
   | { kind: "none" }
   | { kind: "busy"; stage: "requesting" | "uploading" | "confirming" }
-  | { kind: "done"; filename: string }
+  | { kind: "done"; filename: string; resumeId: number }
   | { kind: "error"; message: string };
 
 function Results({
@@ -490,7 +491,11 @@ function Results({
       const done = await uploadResume(file, candidateToken, (stage) =>
         setUpload({ kind: "busy", stage }),
       );
-      setUpload({ kind: "done", filename: done.filename });
+      setUpload({
+        kind: "done",
+        filename: done.filename,
+        resumeId: done.resumeId,
+      });
       // Size only. The file's contents never reach analytics.
       track("resume_uploaded", { size: file.size });
     } catch (err) {
@@ -609,6 +614,9 @@ function Results({
             Nothing is charged for this.
           </p>
           {uploadNotice}
+          {upload.kind === "done" ? (
+            <ResumeReview resumeId={upload.resumeId} candidateToken={token} />
+          ) : null}
           <ul className="mt-5 flex flex-col gap-2.5 text-sm">
             {[
               "Email your resume so it can be reviewed alongside this",
