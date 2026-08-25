@@ -10,3 +10,9 @@ requests==2.32.3
 # S3-compatible client. R2 speaks the S3 API, so this is the same library
 # we would use for S3 -- swapping providers later is an endpoint change.
 boto3==1.35.76
+
+# Resume text extraction. Both run in-process: a resume never leaves our own
+# infrastructure, which is what the site's privacy note promises. No AI, no
+# third-party parsing service.
+pypdf==5.1.0
+python-docx==1.1.2

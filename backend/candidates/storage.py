@@ -155,6 +155,21 @@ def read_prefix(key: str, length: int = 4096) -> bytes:
         return b""
 
 
+def read_all(key: str) -> bytes:
+    """Whole object, for parsing.
+
+    Only ever called on a file we already accepted, and only for a resume
+    capped at RESUME_MAX_BYTES — so this cannot pull something unbounded into
+    memory on a small instance.
+    """
+    try:
+        response = _client().get_object(Bucket=settings.R2_BUCKET_NAME, Key=key)
+        return response["Body"].read()
+    except (BotoCoreError, ClientError) as exc:
+        logger.exception("Full read failed for key=%s", key)
+        raise StorageError(str(exc)) from exc
+
+
 def content_matches_extension(extension: str, prefix: bytes) -> bool:
     """Magic-byte check.
 

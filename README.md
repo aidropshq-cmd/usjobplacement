@@ -72,6 +72,13 @@ progress all read from that one array.
       kitchen sink.
 - [ ] **02 — Hero.** `PlacementRail` component, homepage sections 1–5,
       `/process` with the work-authorisation switcher.
+- [x] **V2 P1 — Data model.** Candidate, Assessment, Resume, extractions,
+      jobs, matches, applications.
+- [x] **V2 P2 — Resume storage.** Private R2, presigned upload/download,
+      confirm-before-uploaded, verified delete.
+- [x] **V2 P3 — Resume parsing.** pypdf + python-docx in-process, no AI.
+      Extraction is staged and applied only on candidate confirmation.
+
 - [ ] **03 — Capture.** Django + DRF on Render, Neon, `Lead` / `Consultation` /
       `Document` models, resume upload to S3 or R2, transactional email,
       `/book-demo` with Calendly.

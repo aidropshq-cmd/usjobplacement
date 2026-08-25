@@ -217,12 +217,22 @@ def confirm_upload(request, resume_id: int):
     )
     candidate.recompute_lead_score()
 
+    # Parse now the file is known good. Deliberately synchronous: a resume
+    # parses in well under a second and a queue is infrastructure this does
+    # not need yet. run_parse never raises — a parse failure must not undo a
+    # successful upload.
+    from .extraction_views import run_parse
+
+    run_parse(resume)
+    resume.refresh_from_db()
+
     return Response(
         {
             "resume_id": resume.id,
             "upload_status": resume.upload_status,
             "size_bytes": resume.size_bytes,
             "original_filename": resume.original_filename,
+            "parse_status": resume.parse_status,
         }
     )
 
