@@ -47,6 +47,7 @@
   --color-violet-ink: var(--violet-ink);
   --color-tint: var(--tint);
   --color-hairline: var(--hairline);
+  --color-border-strong: var(--border-strong);
 
   /* ---- portal stage semantics (never used as brand accent) ---- */
   --color-stage-done: var(--stage-done);
@@ -78,9 +79,26 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
 
-  /* ---- elevation: exactly one shadow, used only on tinted ground ---- */
+  /* ---- elevation ----
+     Depth comes from a graded shadow and border quality, not from blur.
+     There is deliberately no glassmorphism: over a light ground it is close
+     to invisible, and its defining feature — translucent surfaces behind
+     text — is the fastest route back to the 3.34:1 contrast failure that was
+     just fixed. Every surface here is opaque and measurable.
+
+     Three steps, each a real state:
+       raised  resting cards
+       lifted  hover, paired with a 1px translate
+       hero    the one focal panel, and nothing else */
+  --shadow-raised:
+    0 1px 2px rgb(22 19 39 / 0.04), 0 2px 8px -4px rgb(22 19 39 / 0.08);
+  --shadow-lifted:
+    0 2px 4px rgb(22 19 39 / 0.05), 0 12px 28px -10px rgb(22 19 39 / 0.16);
+  --shadow-hero:
+    0 2px 4px rgb(22 19 39 / 0.04), 0 18px 44px -16px rgb(22 19 39 / 0.2);
+  /* Kept so existing usage keeps working; it maps to the resting step. */
   --shadow-card:
-    0 1px 2px rgb(22 19 39 / 0.05), 0 8px 24px -12px rgb(22 19 39 / 0.14);
+    0 1px 2px rgb(22 19 39 / 0.04), 0 2px 8px -4px rgb(22 19 39 / 0.08);
 
   /* ---- motion: one curve, one range ---- */
   --ease-out-soft: cubic-bezier(0.22, 0.61, 0.36, 1);
@@ -128,9 +146,11 @@
   --dim: #8c86a3;
   --caption: #6b6684;
 
-  /* lines */
+  /* lines. --border-strong is for the one focal surface: a slightly denser
+     edge reads as elevation without adding another shadow step. */
   --border: #e7e3f2;
   --hairline: #e7e3f2;
+  --border-strong: #d5ceea;
   --input: #d5ceea;
   --ring: #6c3ce1;
 
@@ -174,6 +194,7 @@
 
   --border: #2c2545;
   --hairline: #2c2545;
+  --border-strong: #3d3459;
   --input: #3d3459;
   --ring: #a78bfa;
 
@@ -237,6 +258,19 @@
   }
 }
 
+@utility card-interactive {
+  /* 120ms, transform and shadow only — inside the 100-150ms the brief asks
+     for, and cheap because neither property triggers layout. */
+  transition:
+    box-shadow 120ms var(--ease-out-soft),
+    transform 120ms var(--ease-out-soft);
+
+  &:hover {
+    box-shadow: var(--shadow-lifted);
+    transform: translateY(-1px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -245,5 +279,10 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  /* No lift, no float, no reveal — not merely a faster one. */
+  .card-interactive:hover {
+    transform: none !important;
   }
 }

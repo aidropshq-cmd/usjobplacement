@@ -40,7 +40,7 @@ export function Testimonials() {
         {publishable.map((item) => (
           <figure
             key={item.quote}
-            className="flex flex-col rounded-lg border border-hairline bg-card p-6 shadow-card"
+            className="flex card-interactive flex-col rounded-lg border border-hairline bg-card p-6 shadow-raised"
           >
             <blockquote className="flex-1 text-muted-foreground">
               “{item.quote}”

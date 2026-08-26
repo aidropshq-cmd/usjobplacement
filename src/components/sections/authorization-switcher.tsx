@@ -29,7 +29,7 @@ export function AuthorizationSwitcher() {
 
       {workAuthorizations.map((auth) => (
         <TabsContent key={auth.id} value={auth.id} className="mt-0">
-          <div className="rounded-lg border border-hairline bg-card p-6 shadow-card sm:p-8">
+          <div className="rounded-lg border border-hairline bg-card p-6 shadow-raised sm:p-8">
             <div className="flex flex-col gap-6 md:flex-row md:gap-10">
               <div className="md:flex-1">
                 <span className="font-mono text-xs tracking-[0.1em] text-primary uppercase">

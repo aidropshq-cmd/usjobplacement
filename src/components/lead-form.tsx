@@ -87,7 +87,7 @@ export function LeadForm() {
 
   if (done) {
     return (
-      <div className="rounded-lg border border-hairline bg-card p-8 shadow-card">
+      <div className="rounded-lg border border-hairline bg-card p-8 shadow-raised">
         <CheckCircle2 className="size-7 text-stage-done" aria-hidden />
         <h3 className="mt-4 text-h3 text-ink">We have your details</h3>
         <p className="mt-3 max-w-[48ch] text-muted-foreground">
@@ -112,7 +112,7 @@ export function LeadForm() {
     <form
       onSubmit={onSubmit}
       noValidate
-      className="rounded-lg border border-hairline bg-card p-6 shadow-card sm:p-8"
+      className="rounded-lg border border-hairline bg-card p-6 shadow-raised sm:p-8"
     >
       <div className="grid gap-5 sm:grid-cols-2">
         <div className="flex flex-col gap-2">

@@ -69,7 +69,7 @@ export function EngagementTiers() {
       {TIERS.map((tier) => (
         <div
           key={tier.name}
-          className={`flex flex-col rounded-lg border bg-card p-6 shadow-card ${
+          className={`flex card-interactive flex-col rounded-lg border bg-card p-6 shadow-raised ${
             tier.featured ? "border-primary" : "border-hairline"
           }`}
         >

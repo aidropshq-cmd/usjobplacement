@@ -183,7 +183,7 @@ export default function KitchenSinkPage() {
         <div className="mt-6">
           <Row label="Button · cta">
             <Button size="cta">
-              Book a free demo call
+              Check my job readiness — free
               <ArrowRight />
             </Button>
             <Button size="cta" variant="outline">
@@ -299,7 +299,7 @@ export default function KitchenSinkPage() {
           lede="Cards carry the one shadow token, and only when they sit on the tinted ground."
         />
         <div className="mt-8 grid gap-4 md:grid-cols-3">
-          <Card className="shadow-card">
+          <Card className="shadow-raised">
             <CardHeader>
               <CardTitle>Resume &amp; LinkedIn</CardTitle>
               <CardDescription>Stage 02 of 08</CardDescription>
@@ -315,7 +315,7 @@ export default function KitchenSinkPage() {
             </CardFooter>
           </Card>
 
-          <Card className="shadow-card">
+          <Card className="shadow-raised">
             <CardHeader>
               <CardTitle>Stage states</CardTitle>
               <CardDescription>Portal semantics</CardDescription>
@@ -333,7 +333,7 @@ export default function KitchenSinkPage() {
             </CardContent>
           </Card>
 
-          <Card className="shadow-card">
+          <Card className="shadow-raised">
             <CardHeader>
               <CardTitle>Overlays</CardTitle>
               <CardDescription>Dialog and mobile nav</CardDescription>
@@ -357,7 +357,7 @@ export default function KitchenSinkPage() {
                     <DialogClose asChild>
                       <Button variant="outline">Close</Button>
                     </DialogClose>
-                    <Button>Book a free demo call</Button>
+                    <Button>Check my job readiness — free</Button>
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
@@ -462,7 +462,7 @@ export default function KitchenSinkPage() {
           title="The Placement Rail lands here"
           lede="Stage data already lives in lib/site.ts, so the rail, the process page and portal progress all read from one source."
         />
-        <div className="mt-8 overflow-x-auto rounded-lg border border-hairline bg-card p-6 shadow-card">
+        <div className="mt-8 overflow-x-auto rounded-lg border border-hairline bg-card p-6 shadow-raised">
           <ol className="grid min-w-[900px] auto-cols-fr grid-flow-col">
             {stages.map((stage, i) => (
               <li key={stage.id} className="relative pt-8 pr-4">

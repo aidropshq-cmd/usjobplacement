@@ -11,24 +11,28 @@ const PIPELINE = [
   "Accepted",
 ] as const;
 
-/** Illustrative rows. No real employers are named — see DashboardPreview. */
+/**
+ * Illustrative rows. Employers are lettered rather than described: even an
+ * invented descriptor like "healthcare SaaS" implies a real company someone
+ * could go looking for, and this table is sample UI.
+ */
 const ROWS = [
   {
-    company: "Cloud infrastructure company",
+    company: "Company A",
     role: "DevOps Engineer",
     date: "12 Aug",
     status: "Technical",
     next: "System design round Thu",
   },
   {
-    company: "Healthcare SaaS",
+    company: "Company B",
     role: "Platform Engineer",
     date: "09 Aug",
     status: "Recruiter screen",
     next: "Send availability",
   },
   {
-    company: "Fintech scale-up",
+    company: "Company C",
     role: "SRE",
     date: "04 Aug",
     status: "Applied",
@@ -60,7 +64,7 @@ export function ApplicationTracker() {
         ))}
       </ol>
 
-      <div className="rounded-lg border border-hairline bg-card shadow-card">
+      <div className="rounded-lg border border-hairline bg-card shadow-raised">
         <div className="flex items-center justify-between gap-4 border-b border-hairline px-5 py-3">
           <span className="text-sm font-medium text-ink">
             Your applications
