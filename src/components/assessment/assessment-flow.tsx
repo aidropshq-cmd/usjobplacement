@@ -126,7 +126,7 @@ export function AssessmentFlow() {
   }
 
   return (
-    <div className="rounded-lg border border-hairline bg-card p-6 shadow-card sm:p-8">
+    <div className="rounded-lg border border-hairline bg-card p-6 shadow-raised sm:p-8">
       {/* progress */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
@@ -542,7 +542,7 @@ function Results({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="rounded-lg border border-hairline bg-card p-6 shadow-card sm:p-8">
+      <div className="rounded-lg border border-hairline bg-card p-6 shadow-raised sm:p-8">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <span className="font-mono text-xs tracking-[0.1em] text-primary uppercase">
@@ -577,7 +577,7 @@ function Results({
         </div>
       </div>
 
-      <div className="rounded-lg border border-hairline bg-card p-6 shadow-card sm:p-8">
+      <div className="rounded-lg border border-hairline bg-card p-6 shadow-raised sm:p-8">
         <h2 className="text-h3 text-ink">Your top opportunities</h2>
         <ol className="mt-5 flex flex-col gap-5">
           {result.priorities.map((p, i) => (
@@ -604,7 +604,7 @@ function Results({
       </div>
 
       {sent ? (
-        <div className="rounded-lg border border-hairline bg-card p-6 shadow-card sm:p-8">
+        <div className="rounded-lg border border-hairline bg-card p-6 shadow-raised sm:p-8">
           <CheckCircle2 className="size-7 text-stage-done" aria-hidden />
           <h2 className="mt-4 text-h3 text-ink">
             Your action plan is being prepared

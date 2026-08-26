@@ -14,10 +14,15 @@ import { DemoLabel } from "@/components/demo-label";
  * about a third party.
  */
 
+/**
+ * No offer count. On a page that states plainly there is no job guarantee,
+ * an offers figure reads as a results claim whatever number sits in it — so
+ * the sample shows activity the candidate controls, not outcomes they do not.
+ */
 const stats = [
   { label: "Applications", value: "12" },
   { label: "Interviews", value: "2" },
-  { label: "Offers", value: "0" },
+  { label: "In progress", value: "5" },
 ];
 
 const matches = [
@@ -28,7 +33,7 @@ const matches = [
 
 export function DashboardPreview({ compact = false }: { compact?: boolean }) {
   return (
-    <div className="rounded-lg border border-hairline bg-card p-5 shadow-card sm:p-6">
+    <div className="rounded-lg border border-border-strong bg-card p-5 shadow-hero sm:p-6">
       <DemoLabel className="mb-4" />
       <div className="flex items-start justify-between gap-4">
         <div>

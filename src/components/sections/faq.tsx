@@ -39,7 +39,7 @@ export const faqs = [
     a: "Yes, and most people are. We usually start by looking at what is already happening — where applications are stalling, which rounds you are not converting — and fix that rather than starting from zero.",
   },
   {
-    q: "Will someone join my interview?",
+    q: "Do you attend interviews on our behalf?",
     a: "Never. We run mock interviews and coaching before each round and debrief with you afterwards. Anyone offering to sit on a live interview is offering fraud: it voids offers, gets candidates blacklisted by employers and background-check vendors, and puts your status at risk.",
   },
   {

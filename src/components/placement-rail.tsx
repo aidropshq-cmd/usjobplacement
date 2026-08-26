@@ -166,7 +166,7 @@ export function PlacementRail({ className }: { className?: string }) {
         id={`rail-panel-${active.id}`}
         aria-labelledby={`rail-tab-${active.id}`}
         tabIndex={0}
-        className="mt-6 rounded-lg border border-hairline bg-card p-6 shadow-card outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:p-8"
+        className="mt-6 rounded-lg border border-hairline bg-card p-6 shadow-raised outline-none focus-visible:ring-3 focus-visible:ring-ring/50 sm:p-8"
       >
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:gap-10">
           <div className="md:flex-1">

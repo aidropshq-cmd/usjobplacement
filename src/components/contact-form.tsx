@@ -50,7 +50,7 @@ export function ContactForm() {
 
   if (done) {
     return (
-      <div className="rounded-lg border border-hairline bg-card p-8 shadow-card">
+      <div className="rounded-lg border border-hairline bg-card p-8 shadow-raised">
         <CheckCircle2 className="size-7 text-stage-done" aria-hidden />
         <h2 className="mt-4 text-h3 text-ink">Message sent</h2>
         <p className="mt-3 text-muted-foreground">
@@ -64,7 +64,7 @@ export function ContactForm() {
     <form
       onSubmit={onSubmit}
       noValidate
-      className="rounded-lg border border-hairline bg-card p-6 shadow-card sm:p-8"
+      className="rounded-lg border border-hairline bg-card p-6 shadow-raised sm:p-8"
     >
       <div className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
