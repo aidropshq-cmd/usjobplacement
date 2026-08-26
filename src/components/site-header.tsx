@@ -9,7 +9,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { navLinks, siteConfig } from "@/lib/site";
+import { WhatsAppIcon } from "@/components/icons/whatsapp";
+import { navLinks, siteConfig, whatsappChannelUrl } from "@/lib/site";
 
 /** Sticky header carrying exactly one primary CTA. */
 export function SiteHeader() {
@@ -28,7 +29,7 @@ export function SiteHeader() {
           </span>
         </Link>
 
-        <nav className="ml-auto hidden items-center gap-7 lg:flex">
+        <nav className="ml-auto hidden items-center gap-5 lg:flex xl:gap-7">
           {navLinks
             .filter((l) => l.live)
             .map((link) => (
@@ -43,6 +44,23 @@ export function SiteHeader() {
         </nav>
 
         <div className="ml-auto flex items-center gap-2 lg:ml-0">
+          {/* Icon-only on desktop: the header already overflowed at 768 once,
+              so this adds width sparingly. The accessible name carries the
+              meaning for anyone not reading the glyph. */}
+          {whatsappChannelUrl ? (
+            <a
+              href={whatsappChannelUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="WhatsApp channel — US role updates and interview prep"
+              className="hidden size-11 shrink-0 items-center justify-center rounded-sm text-muted-foreground outline-none hover:bg-muted hover:text-primary focus-visible:ring-3 focus-visible:ring-ring/50 lg:inline-flex"
+            >
+              <WhatsAppIcon className="size-[18px]" />
+              <span className="sr-only">
+                WhatsApp channel — opens in a new tab
+              </span>
+            </a>
+          ) : null}
           <Button
             asChild
             variant="ghost"
@@ -80,6 +98,22 @@ export function SiteHeader() {
                     </Link>
                   ))}
               </nav>
+              {whatsappChannelUrl ? (
+                <a
+                  href={whatsappChannelUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mx-4 flex min-h-11 items-center gap-2.5 rounded-sm px-3 py-2.5 text-sm text-muted-foreground hover:bg-muted hover:text-ink"
+                >
+                  <WhatsAppIcon className="size-4 shrink-0" />
+                  <span>
+                    WhatsApp channel
+                    <span className="block text-xs text-caption">
+                      US role updates &amp; interview prep
+                    </span>
+                  </span>
+                </a>
+              ) : null}
               <div className="mt-4 px-4">
                 <Button asChild size="cta" className="w-full">
                   <Link href={siteConfig.cta.href}>{siteConfig.cta.label}</Link>
